@@ -175,4 +175,3 @@ Before opening a Pull Request, verify:
 - Read `docs/architecture.md` to understand the system design
 - Read `docs/api.md` for all API endpoints
 - Read `docs/team-modules.md` to understand your module boundaries
-- Ask your team lead if unsure about anything

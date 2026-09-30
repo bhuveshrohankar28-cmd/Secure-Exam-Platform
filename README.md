@@ -268,9 +268,9 @@ Visit **[http://localhost:3000](http://localhost:3000)** in your browser!
 
 ---
 
-## 👥 Team Module Division
+## 👥Module Division
 
-This project is built by a 5-member team. Modules are loosely coupled and communicate through the documented REST API contracts.
+Modules are loosely coupled and communicate through the documented REST API contracts.
 
 | Module | Owner / Focus | Core Files & Areas |
 |:-------|:--------------|:-------------------|
