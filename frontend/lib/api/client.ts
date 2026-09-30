@@ -1,48 +1,50 @@
-import { auth } from "@/lib/firebase/firebaseClient";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
-
 /**
- * Standard API response shape from the backend.
+ * Centralized API Client for Frontend
+ *
+ * NOTE: No .env file is needed for the frontend.
+ * In development, requests connect directly to http://localhost:5000
+ * or via Next.js internal rewrite proxy.
  */
+
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
 }
 
+const API_BASE = "http://localhost:5000";
+
 /**
- * getAuthToken
- *
- * Returns the current user's Firebase ID token.
- * Returns null if no user is signed in or Firebase is not configured.
+ * Retrieves the stored auth token from localStorage (set upon login).
+ * Completely eliminates any need for client-side Firebase keys or .env variables.
  */
-async function getAuthToken(): Promise<string | null> {
-  try {
-    const user = auth?.currentUser;
-    if (!user) return null;
-    return await user.getIdToken();
-  } catch {
-    return null;
+export function getAuthToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("auth_token");
+}
+
+export function setAuthToken(token: string): void {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("auth_token", token);
+  }
+}
+
+export function removeAuthToken(): void {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("auth_token");
   }
 }
 
 /**
- * apiRequest
- *
- * Centralized API request function. Automatically:
- * - Attaches the Firebase ID token as a Bearer token
- * - Sets Content-Type to application/json
- * - Handles errors consistently
- *
- * Usage:
- *   const result = await apiRequest<User>("/api/auth/me");
- *   const result = await apiRequest<Test>("/api/tests", { method: "POST", body: { title: "..." } });
+ * Centralized HTTP request helper.
+ * - Automatically attaches Authorization Bearer token from localStorage
+ * - Sets standard application/json headers
+ * - Handles JSON serialization and error fallbacks
  */
 export async function apiRequest<T = unknown>(
   path: string,
   options: {
-    method?: "GET" | "POST" | "PUT" | "DELETE";
+    method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
     body?: unknown;
     requiresAuth?: boolean;
   } = {}
@@ -54,7 +56,7 @@ export async function apiRequest<T = unknown>(
   };
 
   if (requiresAuth) {
-    const token = await getAuthToken();
+    const token = getAuthToken();
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
     }
@@ -69,10 +71,10 @@ export async function apiRequest<T = unknown>(
 
     const data: ApiResponse<T> = await response.json();
     return data;
-  } catch (error) {
+  } catch {
     return {
       success: false,
-      error: "Network error. Could not reach the backend.",
+      error: "Network error. Could not reach backend server at http://localhost:5000.",
     };
   }
 }

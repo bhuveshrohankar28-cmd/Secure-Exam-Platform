@@ -3,6 +3,8 @@ import {
   getAdminUsers,
   getAdminTests,
   getAdminAttempts,
+  toggleUserApproval,
+  preAllowRtfId,
 } from "../controllers/adminController";
 import { verifyToken, requireRole } from "../middleware/authMiddleware";
 
@@ -12,8 +14,15 @@ const router = Router();
 router.use(verifyToken, requireRole(["admin", "superadmin"]));
 
 // GET /api/admin/users
-// Supports future query params: ?year=&domain=&branch=&status=&online=&search=
 router.get("/users", getAdminUsers);
+
+// PATCH /api/admin/users/:userId/allow
+// Admin allows or revokes a student's examination access
+router.patch("/users/:userId/allow", toggleUserApproval);
+
+// POST /api/admin/users/pre-allow
+// Admin pre-approves an RTF ID
+router.post("/users/pre-allow", preAllowRtfId);
 
 // GET /api/admin/tests
 router.get("/tests", getAdminTests);

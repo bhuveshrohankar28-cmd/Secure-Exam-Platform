@@ -204,28 +204,12 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFA
 
 > **Note on Firebase Credentials:** The backend safely starts even if Firebase credentials are not yet configured; mock mode logs will display until live credentials are provided.
 
-#### Frontend Configuration
-Copy `.env.example` to `.env.local` in the `frontend/` directory:
+#### Frontend Configuration (Zero Config — No `.env` Required!)
+The frontend **does not need any `.env` file**.
 
-```bash
-cd ../frontend
-cp .env.example .env.local
-```
-
-Edit `frontend/.env.local`:
-
-```env
-# URL of your Express API
-NEXT_PUBLIC_API_URL=http://localhost:5000
-
-# Firebase Web Config (Safe to expose on client)
-NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=1234567890
-NEXT_PUBLIC_FIREBASE_APP_ID=1:1234567890:web:abcdef
-```
+* **No Firebase Keys on Client:** All database operations and authentication flow exclusively through the Express backend API.
+* **Automatic Proxy & Fallback:** All API calls automatically connect to `http://localhost:5000` (and `next.config.ts` automatically proxies `/api/*` requests to port 5000).
+* **Zero Setup:** You can clone and run `npm run dev` in `frontend/` immediately without creating `.env` or `.env.local`.
 
 ---
 

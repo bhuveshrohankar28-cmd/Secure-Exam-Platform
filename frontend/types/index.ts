@@ -10,16 +10,18 @@ export type AttemptStatus = "in_progress" | "submitted" | "graded" | "force_subm
 
 export interface User {
   id: string;
+  rtfId: string;
   name: string;
-  email: string;
-  collegeEnrollmentNo: string;
-  collegeEmail: string;
-  branch: string;
-  domain: string;
-  yearOfPassing: number;
-  phone: string;
+  email?: string;
+  collegeEnrollmentNo?: string;
+  collegeEmail?: string;
+  branch?: string;
+  domain?: string;
+  yearOfPassing?: number;
+  phone?: string;
   role: UserRole;
   accountStatus: AccountStatus;
+  isAllowed: boolean;
   lastSeen: string | null;
   createdAt: string;
   updatedAt: string;

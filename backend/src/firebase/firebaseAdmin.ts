@@ -1,20 +1,18 @@
 import { initializeApp, getApps, cert, App } from "firebase-admin/app";
 import { getFirestore, Firestore } from "firebase-admin/firestore";
-import { getAuth, Auth } from "firebase-admin/auth";
 
 let app: App | null = null;
 let db: Firestore | null = null;
-let auth: Auth | null = null;
 
 /**
- * Initializes Firebase Admin SDK using environment variables.
- * The private key newline characters must be unescaped (replace \\n with \n).
+ * Initializes Firebase Admin SDK for Firestore database storage.
+ * Note: Firebase Authentication has been removed in favor of direct
+ * RTF ID verification and Admin approval authorization.
  */
 function initializeFirebase(): void {
   if (getApps().length > 0) {
     app = getApps()[0];
     db = getFirestore(app);
-    auth = getAuth(app);
     return;
   }
 
@@ -24,8 +22,8 @@ function initializeFirebase(): void {
 
   if (!projectId || !clientEmail || !privateKey) {
     console.warn(
-      "[Firebase] Missing Firebase environment variables. Firebase Admin SDK not initialized.\n" +
-        "  Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY in .env"
+      "[Firebase] Missing Firebase environment variables. Firestore not connected.\n" +
+        "  Running in local memory fallback mode for student RTF ID & test data."
     );
     return;
   }
@@ -39,8 +37,7 @@ function initializeFirebase(): void {
       }),
     });
     db = getFirestore(app);
-    auth = getAuth(app);
-    console.log("[Firebase] Admin SDK initialized successfully.");
+    console.log("[Firebase] Firestore Admin initialized successfully.");
   } catch (error) {
     console.error("[Firebase] Failed to initialize Firebase Admin SDK:", error);
   }
@@ -48,5 +45,5 @@ function initializeFirebase(): void {
 
 initializeFirebase();
 
-export { app, db, auth };
+export { app, db };
 export default app;

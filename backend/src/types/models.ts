@@ -28,16 +28,18 @@ export type AccountStatus = "pending" | "active" | "rejected" | "blocked";
  */
 export interface User {
   id: string;
+  rtfId: string; // Unique student RTF ID for login
   name: string;
-  email: string;
-  collegeEnrollmentNo: string;
-  collegeEmail: string;
-  branch: string;
-  domain: string;
-  yearOfPassing: number;
-  phone: string;
+  email?: string;
+  collegeEnrollmentNo?: string;
+  collegeEmail?: string;
+  branch?: string;
+  domain?: string;
+  yearOfPassing?: number;
+  phone?: string;
   role: UserRole;
   accountStatus: AccountStatus;
+  isAllowed: boolean; // Set to true by Admin to allow student examination login
   /**
    * Updated by the heartbeat endpoint.
    * Used to determine online/offline status.

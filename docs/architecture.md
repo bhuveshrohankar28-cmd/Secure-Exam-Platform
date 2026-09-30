@@ -13,36 +13,32 @@ Express.js REST API   (business logic, auth, security)
        ↓
 Firebase Admin SDK    (trusted server-side Firebase access)
        ↓
-Cloud Firestore       (database)
-Firebase Auth         (authentication)
+Cloud Firestore       (database records & audit trail)
+JWT Session Engine    (RTF ID verification & admin approval authorization)
 ```
 
 ---
 
-## Why the Backend is the Gateway to Firebase
+## Why the Backend is the Gateway & Auth Authority
 
 ### The Problem with Direct Frontend Firebase Access
 
-Firebase provides a client SDK that can be used directly from Next.js. However, this approach has serious security problems for an examination platform:
-
-1. **Firestore Security Rules are difficult to maintain** — all access logic ends up in a rule language that is hard to test and debug
-2. **Roles cannot be trusted** — a student could modify their role field if they had direct write access
-3. **Business logic bleeds into the client** — test scoring, access control, and audit logging require server-side logic
-4. **Firebase tokens contain only basic identity** — custom claims (roles) must be set server-side
+1. **Roles and Exam Permissions cannot be trusted in the browser** — examination access must be strictly verified and approved on the server.
+2. **Business logic bleeds into the client** — test scoring, access control, and audit logging require server-side enforcement.
+3. **No client-side credentials or secrets** — removing Firebase Auth from the frontend eliminates configuration friction and potential key exposure.
 
 ### The Solution
 
-The backend is the **only component** that communicates with Firestore using the Firebase Admin SDK with full elevated privileges.
-
-The frontend:
-- Uses Firebase Authentication **only for the login UI and obtaining a token**
-- Sends the token to the backend with every API request
-- Never writes to Firestore directly
+The backend is the **sole authority**:
+- Students log in using their unique **RTF ID** (e.g. `RTF2024001`).
+- The backend verifies whether the student's RTF ID has been explicitly **Allowed** by an administrator (`isAllowed: true`).
+- If allowed, the backend issues a signed JWT session token.
+- If not approved yet, login is blocked with an informative pending approval message.
 
 The backend:
-- Verifies every token using `admin.auth().verifyIdToken(token)`
-- Reads the user's role from Firestore (or custom claims)
-- Enforces all business rules before touching Firestore
+- Verifies every token using signed JWT verification (`authMiddleware`)
+- Checks the student's `isAllowed` approval status
+- Enforces role access (`student` vs `admin`) and test permissions
 
 ---
 

@@ -24,10 +24,8 @@ cp .env.example .env
 npm install
 npm run dev
 
-# 3. Setup Frontend (new terminal)
+# 3. Setup Frontend (new terminal — Zero .env config required!)
 cd frontend
-cp .env.example .env.local
-# Edit .env.local with your Firebase client config
 npm install
 npm run dev
 ```

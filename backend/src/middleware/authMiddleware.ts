@@ -1,40 +1,34 @@
 import { Request, Response, NextFunction } from "express";
-import { auth } from "../firebase/firebaseAdmin";
+import { verifyTokenPayload } from "../utils/token";
+import { UserRole } from "../types/models";
 
 /**
- * Augment Express Request to include the authenticated user.
+ * AuthenticatedUser attached to Express request
  */
+export interface AuthenticatedUser {
+  id: string;
+  uid: string;
+  rtfId: string;
+  name: string;
+  role: UserRole;
+  isAllowed: boolean;
+}
+
 export interface AuthenticatedRequest extends Request {
-  user?: {
-    uid: string;
-    email?: string;
-    role?: string;
-  };
+  user?: AuthenticatedUser;
 }
 
 /**
  * verifyToken — Middleware
  *
- * Reads the Bearer token from the Authorization header,
- * verifies it using Firebase Admin SDK, and attaches the
- * decoded user to req.user.
- *
- * If Firebase is not initialized (e.g., in development without
- * credentials), it returns a 503 instead of crashing.
+ * Reads Bearer token, verifies via JWT, and attaches student/admin to req.user.
+ * Replaces Firebase Auth verifyIdToken.
  */
-export async function verifyToken(
+export function verifyToken(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-): Promise<void> {
-  if (!auth) {
-    res.status(503).json({
-      success: false,
-      error: "Authentication service not available. Firebase is not initialized.",
-    });
-    return;
-  }
-
+): void {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -46,34 +40,33 @@ export async function verifyToken(
   }
 
   const token = authHeader.split("Bearer ")[1];
+  const payload = verifyTokenPayload(token);
 
-  try {
-    const decodedToken = await auth.verifyIdToken(token);
-    req.user = {
-      uid: decodedToken.uid,
-      email: decodedToken.email,
-      // Role is stored as a custom claim; set by admin via backend
-      role: decodedToken.role as string | undefined,
-    };
-    next();
-  } catch (error) {
+  if (!payload) {
     res.status(401).json({
       success: false,
-      error: "Invalid or expired authentication token.",
+      error: "Invalid or expired session token. Please log in with your RTF ID again.",
     });
+    return;
   }
+
+  req.user = {
+    id: payload.id,
+    uid: payload.id,
+    rtfId: payload.rtfId,
+    name: payload.name,
+    role: payload.role,
+    isAllowed: payload.isAllowed,
+  };
+
+  next();
 }
 
 /**
  * requireRole — Middleware factory
- *
- * Returns a middleware that checks whether the authenticated user
- * has one of the allowed roles.
- *
- * Usage:
- *   router.get("/admin-only", verifyToken, requireRole(["admin", "superadmin"]), handler)
+ * Restricts access to specific roles (e.g. ['admin', 'superadmin']).
  */
-export function requireRole(allowedRoles: string[]) {
+export function requireRole(allowedRoles: UserRole[]) {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     const role = req.user?.role;
 
@@ -87,4 +80,29 @@ export function requireRole(allowedRoles: string[]) {
 
     next();
   };
+}
+
+/**
+ * requireAllowedStudent — Middleware
+ * Enforces that a student must have been approved (isAllowed = true) by an administrator.
+ */
+export function requireAllowedStudent(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): void {
+  if (req.user?.role === "admin" || req.user?.role === "superadmin") {
+    next();
+    return;
+  }
+
+  if (!req.user?.isAllowed) {
+    res.status(403).json({
+      success: false,
+      error: "Your RTF ID has not been approved by an administrator yet.",
+    });
+    return;
+  }
+
+  next();
 }
