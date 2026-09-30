@@ -59,6 +59,7 @@ secure-exam-platform/
 │   ├── database.md                 # Cloud Firestore data schemas & indexing
 │   ├── development-phases.md       # Implementation timeline (Phases 1 through 12)
 │   ├── firebase.md                 # Firebase project setup & security rules guide
+│   ├── mobile-testing-guide.md     # Real-device, local Wi-Fi LAN & USB remote debugging guide
 │   ├── stepwise-implementation-guide.md # Detailed step-by-step technical implementation manual
 │   └── team-modules.md             # Module assignments & responsibilities per team member
 │
@@ -241,7 +242,19 @@ cd frontend
 npm run dev
 ```
 
-Visit **[http://localhost:3000](http://localhost:3000)** in your browser!
+#### Option C: Running for Real Mobile Device Testing (Local Wi-Fi)
+To access the platform from an actual smartphone (Android/iOS) on your local Wi-Fi:
+
+```bash
+# Terminal 1 - Backend
+npm run dev:backend
+
+# Terminal 2 - Frontend bound to your local network (0.0.0.0)
+npm run dev:mobile
+```
+
+Find your computer's local IP via `ipconfig` (e.g. `192.168.1.15`), and open **`http://<YOUR_PC_IP>:3000`** in Chrome or Safari on your phone!  
+📖 See the complete **[Mobile Testing & Verification Guide](docs/mobile-testing-guide.md)** for USB debugging, touch UX checklists, and mobile anti-cheating verification.
 
 ---
 

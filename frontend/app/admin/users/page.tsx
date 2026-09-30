@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { adminApi } from "@/lib/api/endpoints";
+import { User } from "@/types";
 
 interface Student {
   id: string;
@@ -85,16 +86,18 @@ export default function AdminUsersPage() {
       try {
         const res = await adminApi.getUsers();
         if (res.success && Array.isArray(res.data)) {
-          const mapped = res.data
-            .filter((u: any) => u.role !== "admin")
-            .map((u: any) => ({
+          const mapped = (res.data as User[])
+            .filter((u) => u.role !== "admin")
+            .map((u) => ({
               id: u.id,
               rtfId: u.rtfId,
               name: u.name,
               domain: u.domain || "General",
               branch: u.branch || "Engineering",
               yearOfPassing: u.yearOfPassing || 2027,
-              status: u.accountStatus || (u.isAllowed ? "active" : "pending"),
+              status: (u.accountStatus === "active" || u.accountStatus === "pending" || u.accountStatus === "rejected" || u.accountStatus === "blocked"
+                ? (u.accountStatus === "active" ? "active" : u.isAllowed ? "active" : "pending")
+                : "pending") as "active" | "pending" | "revoked",
               isAllowed: Boolean(u.isAllowed),
               online: false,
             }));

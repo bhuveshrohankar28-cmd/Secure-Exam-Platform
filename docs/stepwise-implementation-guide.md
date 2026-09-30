@@ -23,6 +23,7 @@
 14. [Phase 12: Security Hardening, Testing & Launch](#phase-12--security-hardening-testing--launch)
 15. [End-to-End Examination Lifecycle Walkthrough](#-end-to-end-examination-lifecycle-walkthrough)
 16. [Branching, Verification & Quality Assurance](#-branching-verification--quality-assurance)
+17. [Mobile Testing & Verification Strategy (See Dedicated Guide)](#-mobile-testing--verification-strategy)
 
 ---
 
@@ -32,7 +33,7 @@ Before beginning work on any phase, all contributors must observe these core eng
 
 1. **Zero Client-Side Secrets:** Client code (`frontend/`) must never import Firebase Admin SDK, service account keys, or JWT signing secrets. All database mutations and sensitive queries must route through the Express REST API (`backend/`).
 2. **Server-Authoritative Evaluation:** The client device is untrusted. Examination answer keys (`correctOptionIndex`), timer validation, access authorization, and grading must happen on the backend.
-3. **Mobile-First Student UX:** Student exam interfaces (`frontend/app/student/*`) must render fluidly on mobile viewports (360px–420px width) as well as desktop screens.
+3. **Mobile-First Student UX:** Student exam interfaces (`frontend/app/student/*`) must render fluidly on mobile viewports (360px–420px width) as well as desktop screens. For testing on physical phones over Wi-Fi, DevTools emulation, USB debugging, and mobile anti-cheating, refer to the **[Mobile Testing & Verification Guide](./mobile-testing-guide.md)**.
 4. **Resilient Offline/Degraded Connectivity:** Student answers and timer states must persist in browser storage (`localStorage`) and sync opportunistically to the backend to prevent data loss.
 5. **Immutable Audit Trails:** Destructive or privilege-sensitive actions (approvals, force-submits, access grants, violations) must generate append-only audit records.
 
@@ -969,3 +970,27 @@ Before any Pull Request is merged into `main`:
 2. **Endpoint Verification:** All newly added endpoints must be documented in [api.md](./api.md) with sample request/response payloads.
 3. **Data Model Sync:** Ensure `backend/src/types/models.ts` and `frontend/types/index.ts` remain strictly synchronized.
 4. **Security Audit:** Confirm no answer keys are leaked and authorization checks (`authMiddleware`, `requireAdmin`) protect sensitive endpoints.
+
+---
+
+## 📱 Mobile Testing & Verification Strategy
+
+Because students predominantly take exams on mobile screens, mobile verification is mandatory across Phases 2, 3, 7, 8, and 10.
+
+For full step-by-step setup guides, refer to the **[Mobile Testing & Verification Guide](./mobile-testing-guide.md)**.
+
+### Quick Start for Testing on a Real Phone:
+1. **Find your computer's local IP address:** Run `ipconfig` (Windows) or `ifconfig` (macOS/Linux) to find your IPv4 address (e.g., `192.168.1.15`).
+2. **Start the backend server:** `npm run dev:backend` (running on port 5000).
+3. **Start frontend bound to local network:**
+   ```bash
+   npm run dev:mobile
+   ```
+   *(Runs `next dev -H 0.0.0.0` on port 3000)*.
+4. **Connect phone to same Wi-Fi:** Open browser on phone and navigate to:
+   ```
+   http://<YOUR_PC_IP>:3000
+   ```
+5. **Zero-Config Mobile Proxy:** The Next.js frontend proxy automatically routes `/api/*` requests to the Express backend (`http://localhost:5000`) without requiring manual IP or CORS configuration.
+6. **USB Remote Debugging:** For real-time mobile console output and network inspects, connect your Android device via USB and open `chrome://inspect/#devices` on your desktop browser.
+

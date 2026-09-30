@@ -41,7 +41,8 @@ export default function LoginPage() {
         }
       } else {
         // Check if denied due to pending admin approval
-        if ((response as any).isPending || response.error?.includes("not been approved")) {
+        const resWithPending = response as { isPending?: boolean; error?: string };
+        if (resWithPending.isPending || response.error?.includes("not been approved")) {
           setIsPendingApproval(true);
         }
         setError(response.error || "Login failed. Please check your RTF ID.");

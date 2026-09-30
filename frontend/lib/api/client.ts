@@ -12,7 +12,16 @@ export interface ApiResponse<T = unknown> {
   error?: string;
 }
 
-const API_BASE = "http://localhost:5000";
+/**
+ * In browser runtime, an empty API_BASE leverages the Next.js rewrite proxy
+ * (configured in next.config.ts), allowing physical mobile devices on the same Wi-Fi
+ * (e.g. http://192.168.1.15:3000) to communicate seamlessly without localhost resolution errors.
+ * In SSR / Node runtime, it defaults to direct backend address.
+ */
+const API_BASE =
+  typeof window !== "undefined"
+    ? ""
+    : process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 /**
  * Retrieves the stored auth token from localStorage (set upon login).

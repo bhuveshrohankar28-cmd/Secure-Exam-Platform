@@ -6,6 +6,8 @@
   "scripts": {
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
+    "dev:frontend:mobile": "cd frontend && npm run dev:mobile",
+    "dev:mobile": "npm run dev:frontend:mobile",
     "install:all": "cd backend && npm install && cd ../frontend && npm install"
   },
   "keywords": ["exam", "mcq", "firebase", "nextjs", "express"],

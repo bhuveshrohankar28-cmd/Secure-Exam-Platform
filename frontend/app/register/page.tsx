@@ -34,7 +34,7 @@ export default function RegisterPage() {
 
       if (response.success) {
         setSuccessMessage(
-          (response.data as any)?.message ||
+          (response.data as { message?: string } | undefined)?.message ||
             `Student registration complete! RTF ID "${formData.rtfId.toUpperCase()}" is now registered. Please wait for your exam administrator to allow your account before logging in.`
         );
       } else {

@@ -35,8 +35,13 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (e.g. curl, Postman during dev)
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (e.g. curl, Postman, Next.js server rewrites)
+      // and allow LAN mobile connections during development
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        process.env.NODE_ENV !== "production"
+      ) {
         callback(null, true);
       } else {
         callback(new Error(`CORS: Origin '${origin}' not allowed.`));

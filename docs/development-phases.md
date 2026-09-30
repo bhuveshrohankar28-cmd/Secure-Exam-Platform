@@ -109,13 +109,14 @@ Each phase builds on the previous one. Do not skip phases.
 **Deliverables:**
 - [ ] Test instructions page with countdown before start
 - [ ] Full exam interface (all questions, navigation)
+- [ ] Mobile-first responsive layout (360px–420px viewports, touch targets >= 48px, slide-over palette drawer)
 - [ ] Countdown timer with visual warning at 5 minutes
 - [ ] Answer selection and navigation
 - [ ] Answer autosave every 30 seconds
 - [ ] Submit button with confirmation dialog
 - [ ] Attempt record in Firestore
 
-**Test:** Student starts a test, answers all questions, and submits.
+**Test:** Student starts a test on mobile and desktop, answers all questions, and submits. See [mobile-testing-guide.md](./mobile-testing-guide.md).
 
 ---
 
@@ -154,6 +155,7 @@ Each phase builds on the previous one. Do not skip phases.
 
 **Deliverables:**
 - [ ] Tab switch detection (`visibilitychange` event)
+- [ ] Mobile app switch and notification shade blur detection
 - [ ] Window blur/focus detection
 - [ ] Fullscreen monitoring
 - [ ] Copy/paste blocking

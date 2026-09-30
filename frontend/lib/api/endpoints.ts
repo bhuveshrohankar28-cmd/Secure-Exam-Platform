@@ -1,4 +1,5 @@
 import { apiRequest } from "./client";
+import { User } from "../../types";
 
 /**
  * API functions for /api/auth endpoints
@@ -6,7 +7,7 @@ import { apiRequest } from "./client";
  */
 export const authApi = {
   login: (rtfId: string, role?: string) =>
-    apiRequest<{ token: string; user: any; message?: string }>("/api/auth/login", {
+    apiRequest<{ token: string; user: User; message?: string }>("/api/auth/login", {
       method: "POST",
       body: { rtfId, role },
       requiresAuth: false,
