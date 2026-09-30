@@ -4,6 +4,8 @@ This document outlines the recommended order of implementation for the Secure Ex
 
 Each phase builds on the previous one. Do not skip phases.
 
+> 📖 **Detailed Technical Guide:** For comprehensive, step-by-step instructions, sequence diagrams, code contracts, API payloads, and testing procedures for each phase, see the **[Step-by-Step Implementation Guide](./stepwise-implementation-guide.md)**.
+
 ---
 
 ## Phase 1 — Project Foundation ✅ COMPLETE

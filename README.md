@@ -59,6 +59,7 @@ secure-exam-platform/
 │   ├── database.md                 # Cloud Firestore data schemas & indexing
 │   ├── development-phases.md       # Implementation timeline (Phases 1 through 12)
 │   ├── firebase.md                 # Firebase project setup & security rules guide
+│   ├── stepwise-implementation-guide.md # Detailed step-by-step technical implementation manual
 │   └── team-modules.md             # Module assignments & responsibilities per team member
 │
 ├── backend/                        # Express + TypeScript REST API Server
