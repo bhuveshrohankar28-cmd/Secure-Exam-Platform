@@ -1,0 +1,13 @@
+{
+  "name": "secure-exam-platform",
+  "version": "1.0.0",
+  "description": "Secure Online MCQ Examination Platform — Monorepo root",
+  "private": true,
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install"
+  },
+  "keywords": ["exam", "mcq", "firebase", "nextjs", "express"],
+  "license": "MIT"
+}
