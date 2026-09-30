@@ -24,20 +24,20 @@ Each phase builds on the previous one. Do not skip phases.
 
 ---
 
-## Phase 2 — Authentication
+## Phase 2 — RTF ID Authentication & Admin Approval ✅ COMPLETE
 
-**Goal:** Students and admins can register and log in.
+**Goal:** Students can register and log in with their RTF ID; only students approved/allowed by an administrator can access examinations.
 
 **Deliverables:**
-- [ ] Student registration form (with all required fields)
-- [ ] Firebase Authentication email/password login
-- [ ] Backend token verification working (`verifyToken` middleware)
-- [ ] Firestore user document created on registration (via backend)
-- [ ] Role assignment via Firebase custom claims
-- [ ] Account status starts as `pending` after registration
-- [ ] Admin approves `pending` → `active`
+- [x] Direct student login with unique RTF ID (no Firebase Auth, Google Auth, or email/password dependencies)
+- [x] Student registration form capturing RTF ID, Name, Domain, and Passing Year
+- [x] Admin approval verification gate (`isAllowed`) before granting exam access
+- [x] Informative pending approval feedback when an RTF ID is registered but not yet allowed
+- [x] Admin approval endpoints (`PATCH /api/admin/users/:userId/allow` and pre-approval)
+- [x] Interactive Admin user management table with one-click Allow/Revoke buttons
+- [x] Secure JWT session tokens issued by backend (`authMiddleware` verification)
 
-**Test:** A student can register, log in, and their profile appears in Firestore.
+**Test:** Student enters RTF ID. If approved by admin, login succeeds and JWT token is issued. If pending, login is blocked with an approval alert.
 
 ---
 

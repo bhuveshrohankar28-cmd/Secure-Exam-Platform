@@ -33,7 +33,7 @@ The platform uses a decoupled, three-tier architecture:
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                 Data & Identity Services                    │
-│   Google Firebase Authentication & Cloud Firestore          │
+│   Cloud Firestore (Database) + JWT Session Authority        │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -138,7 +138,8 @@ secure-exam-platform/
 - **Framework:** [Express 5](https://expressjs.com/)
 - **Language:** TypeScript with `tsc` compilation & `ts-node` / `nodemon` in development
 - **Security:** [Helmet](https://helmetjs.github.io/) for HTTP security headers, [CORS](https://github.com/expressjs/cors) for controlled cross-origin requests
-- **Database & Auth SDK:** [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) (v14+)
+- **Database:** Cloud Firestore via [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) (v14+)
+- **Authentication:** Custom Student RTF ID Verification & Admin Approval with [JSON Web Tokens (JWT)](https://jwt.io/) (No Firebase Auth or Google Auth required)
 - **Validation:** [Zod](https://zod.dev/) for robust runtime request schema validation
 
 ---
@@ -148,7 +149,7 @@ secure-exam-platform/
 ### Prerequisites
 1. **Node.js** v18.0.0 or higher
 2. **npm** v9.0.0 or higher
-3. A Google **Firebase** project (for Firestore & Authentication)
+3. A Google **Firebase** project (for Cloud Firestore storage — optional in local development, as memory fallback is included)
 
 ---
 
@@ -273,7 +274,7 @@ This project is built by a 5-member team. Modules are loosely coupled and commun
 
 | Module | Owner / Focus | Core Files & Areas |
 |:-------|:--------------|:-------------------|
-| **Module 1** | **Authentication & User Management** | `backend/src/routes/authRoutes.ts`, `backend/src/middleware/authMiddleware.ts`, `frontend/app/login`, `frontend/app/register`, Firebase Auth integration |
+| **Module 1** | **RTF ID Authentication & User Management** | `backend/src/routes/authRoutes.ts`, `backend/src/middleware/authMiddleware.ts`, `backend/src/utils/token.ts`, `frontend/app/login`, `frontend/app/register`, RTF ID verification & admin approval gate |
 | **Module 2** | **Admin Dashboard & Test Access** | `frontend/app/admin/*`, `backend/src/routes/accessRoutes.ts`, access control by branch/year/domain |
 | **Module 3** | **Test Builder & Question Management** | `backend/src/routes/testRoutes.ts`, question bank schema, test options, MCQ CRUD interface |
 | **Module 4** | **Student Examination Interface & Engine** | `frontend/app/student/*`, timer countdown, responsive mobile question navigation, test submission |
@@ -281,13 +282,13 @@ This project is built by a 5-member team. Modules are loosely coupled and commun
 
 ---
 
-## 🗺️ Roadmap & Next Implementation Phase
+## 🗺️ Roadmap & Implementation Phases
 
 The project adheres to structured iterative phases:
 
-- [x] **Phase 1: Project Foundation** *(Current)* — Directory architecture, Firebase Admin integration, TypeScript types, Express skeleton, Next.js UI scaffolding, and documentation.
-- [ ] **Phase 2: Authentication** — Firebase Client Auth, Google/Email login, backend token verification, and role custom claims.
-- [ ] **Phase 3: User Management** — Student profile completion, enrollment verification, and presence heartbeats.
+- [x] **Phase 1: Project Foundation** ✅ COMPLETE — Directory architecture, TypeScript types, Express skeleton, Next.js UI scaffolding, and documentation.
+- [x] **Phase 2: RTF ID Authentication & Admin Approval** ✅ COMPLETE — Direct student login via RTF ID, Admin approval verification gate (`isAllowed`), signed JWT session tokens, and interactive admin user approval management.
+- [ ] **Phase 3: User Management & Heartbeats** — Student profile completion, enrollment verification, and presence heartbeats (`lastSeen`).
 - [ ] **Phase 4: Admin Dashboard** — Metrics overview, student directory table, and status filtering.
 - [ ] **Phase 5: Test Creation & Question Bank** — MCQ authoring, question randomization, and duration limits.
 - [ ] **Phase 6: Test Access Management** — Admin permission grants (by domain, year, or individual student).
@@ -299,7 +300,7 @@ The project adheres to structured iterative phases:
 - [ ] **Phase 12: Production Hardening** — Security audit, rate limiting, and performance testing.
 
 ### Recommended Next Step
-Proceed to **Phase 2 (Authentication)**: implement Firebase client-side SDK initialization on Next.js, wire up the `/login` and `/register` forms, and attach backend verification middleware with role assignment.
+Proceed to **Phase 3 (User Management & Heartbeats)** or **Phase 5 (Test Creation & Question Bank)**: create the question bank data structure and test authoring interface for administrators.
 
 ---
 
