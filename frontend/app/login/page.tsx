@@ -27,13 +27,16 @@ export default function LoginPage() {
     try {
       const response = await authApi.login(rtfId.trim());
 
-      if (response.success && response.data?.token) {
-        setAuthToken(response.data.token);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("user", JSON.stringify(response.data.user));
+      const token = response.data?.token || (response as unknown as { token?: string }).token;
+      const user = response.data?.user || (response as unknown as { user?: { role?: string } }).user;
+
+      if (response.success && token) {
+        setAuthToken(token);
+        if (typeof window !== "undefined" && user) {
+          localStorage.setItem("user", JSON.stringify(user));
         }
 
-        const role = response.data.user?.role;
+        const role = user?.role;
         if (role === "admin" || role === "superadmin") {
           router.push("/admin/dashboard");
         } else {

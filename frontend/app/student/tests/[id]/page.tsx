@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Test Instructions" };
 
-export default function TestInstructionsPage({
+export default async function TestInstructionsPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   return (
     <main
       style={{
@@ -23,7 +24,7 @@ export default function TestInstructionsPage({
           Test Instructions
         </h1>
         <p style={{ color: "var(--color-text-secondary)", marginBottom: "24px", fontSize: "0.9rem" }}>
-          Test ID: <code style={{ color: "#4f8ef7" }}>{params.id}</code>
+          Test ID: <code style={{ color: "#4f8ef7" }}>{id}</code>
         </p>
 
         <div
@@ -67,7 +68,7 @@ export default function TestInstructionsPage({
         </div>
 
         <button
-          id={`exam-start-btn-${params.id}`}
+          id={`exam-start-btn-${id}`}
           disabled
           style={{
             width: "100%",

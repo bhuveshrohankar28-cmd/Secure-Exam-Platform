@@ -4,7 +4,7 @@
   "description": "Secure Online MCQ Examination Platform — Backend API",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon",
+    "dev": "tsx watch server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
   },
@@ -33,7 +33,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.3",
     "nodemon": "^3.1.14",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }
 }

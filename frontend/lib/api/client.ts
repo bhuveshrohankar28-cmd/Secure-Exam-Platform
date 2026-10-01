@@ -78,8 +78,14 @@ export async function apiRequest<T = unknown>(
       body: body ? JSON.stringify(body) : undefined,
     });
 
-    const data: ApiResponse<T> = await response.json();
-    return data;
+    const rawData = (await response.json()) as Record<string, unknown>;
+    const normalized: ApiResponse<T> = {
+      success: Boolean(rawData.success),
+      data: (rawData.data !== undefined ? rawData.data : rawData) as T,
+      error: typeof rawData.error === "string" ? rawData.error : undefined,
+      ...rawData,
+    };
+    return normalized;
   } catch {
     return {
       success: false,

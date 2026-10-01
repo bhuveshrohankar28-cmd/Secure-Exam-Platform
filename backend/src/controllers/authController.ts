@@ -54,6 +54,10 @@ export async function login(req: Request, res: Response): Promise<void> {
       message: "Admin login successful",
       token,
       user: adminUser,
+      data: {
+        token,
+        user: adminUser,
+      },
     });
     return;
   }
@@ -103,6 +107,10 @@ export async function login(req: Request, res: Response): Promise<void> {
     message: "Login successful",
     token,
     user,
+    data: {
+      token,
+      user,
+    },
   });
 }
 
