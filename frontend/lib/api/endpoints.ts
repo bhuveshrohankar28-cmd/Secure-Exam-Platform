@@ -3,26 +3,14 @@ import { User } from "../../types";
 
 /**
  * API functions for /api/auth endpoints
- * Direct RTF ID Login & Registration (No Firebase Auth)
+ * Login by username. User accounts are created on first login.
+ * Admin (ADMIN001) must also send a password.
  */
 export const authApi = {
-  login: (rtfId: string, role?: string) =>
+  login: (username: string, password?: string, name?: string) =>
     apiRequest<{ token: string; user: User; message?: string }>("/api/auth/login", {
       method: "POST",
-      body: { rtfId, role },
-      requiresAuth: false,
-    }),
-  register: (data: {
-    rtfId: string;
-    name: string;
-    email?: string;
-    domain?: string;
-    branch?: string;
-    yearOfPassing?: number;
-  }) =>
-    apiRequest("/api/auth/register", {
-      method: "POST",
-      body: data,
+      body: { username, password, name },
       requiresAuth: false,
     }),
   logout: () => apiRequest("/api/auth/logout", { method: "POST" }),
@@ -68,11 +56,6 @@ export const adminApi = {
     apiRequest(`/api/admin/users/${userId}/allow`, {
       method: "PATCH",
       body: { isAllowed },
-    }),
-  preAllowRtfId: (rtfId: string, name?: string) =>
-    apiRequest("/api/admin/users/pre-allow", {
-      method: "POST",
-      body: { rtfId, name },
     }),
   getTests: () => apiRequest("/api/admin/tests"),
   getAttempts: () => apiRequest("/api/admin/attempts"),

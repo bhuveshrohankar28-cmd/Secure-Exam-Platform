@@ -11,14 +11,12 @@ This document describes the suggested module ownership for each team member. Mod
 **Phases:** 2, 3
 
 **Responsibilities:**
-- Firebase Authentication integration on the frontend
-- Student registration form with all fields (name, enrollment no., branch, domain, year, phone)
+- Public username-based account creation and login
 - Login/logout flow
-- Firebase ID token handling in the frontend API client
-- Backend `/api/auth/register`, `/api/auth/login`, `/api/auth/logout` implementation
-- Backend user profile creation in Firestore on registration
-- Account status approval flow (admin approves `pending` → `active` accounts)
-- Role assignment via Firebase custom claims
+- JWT session handling in the frontend API client
+- Backend `/api/auth/login`, `/api/auth/logout`, and profile endpoints
+- Backend user profile creation on first sign-in
+- Administrator account access controls and role-based authorization
 
 **Files:**
 - `frontend/app/login/page.tsx`

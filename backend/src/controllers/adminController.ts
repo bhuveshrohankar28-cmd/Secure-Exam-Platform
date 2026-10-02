@@ -3,13 +3,11 @@ import { AuthenticatedRequest } from "../middleware/authMiddleware";
 import {
   getAllUsers,
   updateUserAllowed,
-  getUserByRtfId,
-  createUser,
 } from "../services/userService";
 
 /**
  * GET /api/admin/users
- * Returns list of students and admins with their RTF IDs and approval statuses.
+ * Returns all user accounts and their access statuses.
  */
 export async function getAdminUsers(
   req: AuthenticatedRequest,
@@ -29,7 +27,7 @@ export async function getAdminUsers(
     const q = search.toLowerCase();
     filtered = filtered.filter(
       (u) =>
-        u.rtfId.toLowerCase().includes(q) ||
+        u.username.toLowerCase().includes(q) ||
         u.name.toLowerCase().includes(q) ||
         (u.domain && u.domain.toLowerCase().includes(q))
     );
@@ -44,7 +42,7 @@ export async function getAdminUsers(
 
 /**
  * PATCH /api/admin/users/:userId/allow
- * Admin action to allow or revoke student access by RTF ID/User ID
+ * Admin action to enable or disable account access.
  */
 export async function toggleUserApproval(
   req: AuthenticatedRequest,
@@ -68,61 +66,20 @@ export async function toggleUserApproval(
   res.status(200).json({
     success: true,
     message: shouldAllow
-      ? `Student ${updatedUser.name} (${updatedUser.rtfId}) is now ALLOWED to take exams.`
-      : `Student ${updatedUser.name} (${updatedUser.rtfId}) access has been REVOKED.`,
+      ? `Account ${updatedUser.name} (${updatedUser.username}) is enabled.`
+      : `Account ${updatedUser.name} (${updatedUser.username}) is disabled.`,
     user: updatedUser,
-  });
-}
-
-/**
- * POST /api/admin/users/pre-allow
- * Allows admin to pre-approve an RTF ID before the student even logs in.
- */
-export async function preAllowRtfId(
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> {
-  const { rtfId, name, domain, branch, yearOfPassing } = req.body;
-
-  if (!rtfId) {
-    res.status(400).json({ success: false, error: "RTF ID is required." });
-    return;
-  }
-
-  const normalizedRtf = rtfId.trim().toUpperCase();
-  const existing = await getUserByRtfId(normalizedRtf);
-
-  if (existing) {
-    const updated = await updateUserAllowed(existing.id, true);
-    res.status(200).json({
-      success: true,
-      message: `RTF ID ${normalizedRtf} is now approved!`,
-      user: updated,
-    });
-    return;
-  }
-
-  const newUser = await createUser({
-    rtfId: normalizedRtf,
-    name: name || `Student ${normalizedRtf}`,
-    domain,
-    branch,
-    yearOfPassing,
-    isAllowed: true, // Pre-approved!
-  });
-
-  res.status(201).json({
-    success: true,
-    message: `RTF ID ${normalizedRtf} pre-approved successfully!`,
-    user: newUser,
   });
 }
 
 /**
  * GET /api/admin/tests
  */
-export function getAdminTests(req: AuthenticatedRequest, res: Response): void {
-  res.status(200).json({ success: true, data: [] });
+import { listTests } from "../services/testService";
+
+export async function getAdminTests(req: AuthenticatedRequest, res: Response): Promise<void> {
+  const tests = await listTests();
+  res.status(200).json({ success: true, data: tests });
 }
 
 /**

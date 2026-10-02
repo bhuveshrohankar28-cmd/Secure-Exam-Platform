@@ -10,7 +10,7 @@
 1. [Architectural Principles & Global Standards](#-architectural-principles--global-standards)
 2. [Phase Dependency Matrix](#-phase-dependency-matrix)
 3. [Phase 1: Project Foundation (Completed)](#phase-1--project-foundation--completed)
-4. [Phase 2: RTF ID Authentication & Admin Approval (Completed)](#phase-2--rtf-id-authentication--admin-approval--completed)
+4. [Phase 2: Open Account Access (Completed)](#phase-2--open-account-access--completed)
 5. [Phase 3: User Management & Presence Heartbeat](#phase-3--user-management--presence-heartbeat)
 6. [Phase 4: Admin Dashboard & User Management](#phase-4--admin-dashboard--user-management)
 7. [Phase 5: Test Builder & Question Bank](#phase-5--test-builder--question-bank)
@@ -35,7 +35,7 @@ Before beginning work on any phase, all contributors must observe these core eng
 2. **Server-Authoritative Evaluation:** The client device is untrusted. Examination answer keys (`correctOptionIndex`), timer validation, access authorization, and grading must happen on the backend.
 3. **Mobile-First Student UX:** Student exam interfaces (`frontend/app/student/*`) must render fluidly on mobile viewports (360px–420px width) as well as desktop screens. For testing on physical phones over Wi-Fi, DevTools emulation, USB debugging, and mobile anti-cheating, refer to the **[Mobile Testing & Verification Guide](./mobile-testing-guide.md)**.
 4. **Resilient Offline/Degraded Connectivity:** Student answers and timer states must persist in browser storage (`localStorage`) and sync opportunistically to the backend to prevent data loss.
-5. **Immutable Audit Trails:** Destructive or privilege-sensitive actions (approvals, force-submits, access grants, violations) must generate append-only audit records.
+5. **Immutable Audit Trails:** Destructive or privilege-sensitive actions (account access changes, force-submits, test access grants, violations) must generate append-only audit records.
 
 ---
 
@@ -43,7 +43,7 @@ Before beginning work on any phase, all contributors must observe these core eng
 
 ```mermaid
 flowchart TD
-    P1["Phase 1: Project Foundation"] --> P2["Phase 2: RTF Auth & Admin Approval"]
+    P1["Phase 1: Project Foundation"] --> P2["Phase 2: Open Account Access"]
     P2 --> P3["Phase 3: User Profile & Heartbeat"]
     P2 --> P4["Phase 4: Admin Dashboard & Filters"]
     P4 --> P5["Phase 5: Test Builder & Questions"]
@@ -75,49 +75,37 @@ Establish the monorepo structure, build systems, TypeScript configurations, envi
 
 ---
 
-## Phase 2 — RTF ID Authentication & Admin Approval (✅ Completed)
+## Phase 2 — Open Account Access (✅ Completed)
 
 ### 1. Objective
-Enable students to register and log in using an institutional RTF ID without third-party email/password or client Firebase dependencies. Enforce an administrative approval gate (`isAllowed: true`) before granting platform access.
+Allow anyone to create an account and sign in with a username and full name. New accounts are enabled immediately; administrators can disable accounts, while individual examinations remain protected by test-specific access grants.
 
 ### 2. Architecture & Data Flow
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Student
+    actor User
     actor Admin
     participant Frontend as Next.js Client
     participant Backend as Express API
     participant DB as Cloud Firestore
 
-    Student->>Frontend: Fill Registration Form (RTF ID, Name, Domain, Year)
-    Frontend->>Backend: POST /api/auth/register
-    Backend->>DB: Check uniqueness & save User (isAllowed: false, accountStatus: 'pending')
-    Backend-->>Frontend: 201 Created (Pending approval notice)
+    User->>Frontend: Choose username and enter full name
+    Frontend->>Backend: POST /api/auth/login { username, name }
+    Backend->>DB: Find account or create enabled user profile
+    Backend-->>Frontend: 200 OK (JWT Token + User Profile)
+    Frontend->>Frontend: Save JWT in localStorage
 
-    Admin->>Frontend: Review User in Admin Directory
-    Admin->>Frontend: Click "Allow Student"
-    Frontend->>Backend: PATCH /api/admin/users/:userId/allow { isAllowed: true }
-    Backend->>DB: Update user.isAllowed = true, accountStatus = 'active'
-    Backend-->>Frontend: 200 OK (Allowed)
-
-    Student->>Frontend: Enter RTF ID & Click "Sign In"
-    Frontend->>Backend: POST /api/auth/login { rtfId }
-    Backend->>DB: Query user by RTF ID
-    alt Not Allowed
-        Backend-->>Frontend: 403 Forbidden (Pending Approval Alert)
-    else Allowed
-        Backend-->>Frontend: 200 OK (JWT Token + User Profile)
-        Frontend->>Frontend: Save JWT in localStorage
-    end
+    Admin->>Frontend: Disable account when necessary
+    Frontend->>Backend: PATCH /api/admin/users/:userId/allow { isAllowed: false }
+    Backend->>DB: Disable account access
 ```
 
 ### 3. Verification & Acceptance
-- Registered student with ID `RTF2026001`.
-- Attempted login immediately → Blocked with HTTP 403 and informative pending status alert.
-- Admin logged in (`ADMIN001`) and clicked "Allow" → Student status transitioned to `Allowed`.
-- Student logged in again → Successfully issued JWT and redirected to student dashboard.
+- A first-time user enters a username and full name.
+- The backend creates an enabled account and issues a JWT immediately.
+- The user is redirected to the student dashboard; test availability depends on test-specific access grants.
 
 ---
 
@@ -179,7 +167,7 @@ export function useHeartbeat(intervalMs: number = 30000) {
 - Mount `useHeartbeat(30000)`.
 - On page load, invoke `usersApi.me()`.
 - Display a profile overview card:
-  - Student Name & RTF ID
+  - User Name & Username
   - Registered Domain & Branch
   - Passing Year
   - Current System Status: `Active / Verified`
@@ -235,8 +223,8 @@ Equip administrators with a control room to view, search, filter, and moderate a
 
 #### Step 4.3: Admin Directory UI Enhancements (`frontend/app/admin/users/page.tsx`)
 - Add filter controls:
-  - Search input (RTF ID, student name, email)
-  - Status dropdown (`All`, `Pending Approval`, `Allowed`, `Blocked`)
+  - Search input (username, name, email)
+  - Status dropdown (`All`, `Enabled`, `Disabled`)
   - Presence dropdown (`All`, `Online Now`, `Offline`)
 - Add bulk actions:
   - "Approve All Pending" button
@@ -402,7 +390,7 @@ sequenceDiagram
   - "Select by Domain" (e.g., Cloud, AI/ML, Full Stack).
   - "Select by Passing Year" (e.g., 2026, 2027).
 - Action buttons: "Grant Access (X students)" and "Revoke Access".
-- Access list displaying student name, RTF ID, granted date, and status pill.
+- Access list displaying account name, username, granted date, and status pill.
 
 ### 4. Verification & Testing
 1. Create Test 1 and Test 2.
@@ -801,11 +789,11 @@ Provide administrators with a real-time command dashboard showing all active exa
 ┌────────────────────────────────────────────────────────────────────────────┐
 │ 📡 Live Exam Monitor: Cloud Computing Mid-Term (14 Students Active)        │
 ├──────────────┬─────────────┬──────────┬────────────┬───────────┬───────────┤
-│ Student      │ RTF ID      │ Presence │ Progress   │ Violations│ Actions   │
+│ Student      │ Username    │ Presence │ Progress   │ Violations│ Actions   │
 ├──────────────┼─────────────┼──────────┼────────────┼───────────┼───────────┤
-│ John Doe     │ RTF2026011  │ 🟢 Active│ 18/25 (72%)│ 0 Clean   │ [Detail]  │
-│ Sarah Connor │ RTF2026042  │ 🟢 Active│ 12/25 (48%)│ ⚠️ 4 Tabs │ [Force ⚡]│
-│ Alex Murphy  │ RTF2026089  │ 🔴 3m ago│ 5/25 (20%) │ 0 Clean   │ [Detail]  │
+│ John Doe     │ john2026    │ 🟢 Active│ 18/25 (72%)│ 0 Clean   │ [Detail]  │
+│ Sarah Connor │ sarah2026   │ 🟢 Active│ 12/25 (48%)│ ⚠️ 4 Tabs │ [Force ⚡]│
+│ Alex Murphy  │ alex2026    │ 🔴 3m ago│ 5/25 (20%) │ 0 Clean   │ [Detail]  │
 └──────────────┴─────────────┴──────────┴────────────┴───────────┴───────────┘
 ```
 
@@ -815,7 +803,7 @@ Provide administrators with a real-time command dashboard showing all active exa
 - Endpoint: `GET /api/admin/monitoring/active`
 - Query logic:
   1. Fetch all `testAttempts` where `status == "in_progress"`.
-  2. Join student details (`name`, `rtfId`, `lastSeen`).
+  2. Join user details (`name`, `username`, `lastSeen`).
   3. Aggregate answer count for each attempt.
   4. Aggregate count of violations grouped by `attemptId`.
   5. Return consolidated real-time array.
@@ -909,8 +897,8 @@ service cloud.firestore {
 #### Step 12.4: Comprehensive End-to-End Test Scenario
 Execute this end-to-end verification runbook before declaring production readiness:
 1. **Admin Setup:** Admin creates Test A with 10 questions and sets duration to 15 minutes.
-2. **Student Onboarding:** Register Student `RTF2026999`.
-3. **Admin Approval:** Admin allows `RTF2026999` and grants access to Test A.
+2. **Account Creation:** A user chooses a username and creates an account.
+3. **Test Access:** Admin grants the account access to Test A.
 4. **Student Session:** Student logs in, views Test A on dashboard, reads instructions, and starts attempt.
 5. **Autosave Verification:** Student answers 5 questions; tab is refreshed; answers and countdown restore flawlessly.
 6. **Violation Verification:** Student switches tabs; violation warning triggers and writes to backend.
@@ -927,9 +915,9 @@ To assist in understanding how all 12 phases interconnect during a live exam, re
 ```mermaid
 stateDiagram-v2
     [*] --> Unregistered
-    Unregistered --> PendingApproval: Student Registers with RTF ID (Phase 2)
-    PendingApproval --> Allowed: Admin Approves Account (Phase 2 & 4)
-    Allowed --> Authenticated: Student Logs In (JWT Issued)
+    Unregistered --> Authenticated: User Signs In (Account Created, JWT Issued)
+    Authenticated --> Disabled: Admin Disables Account
+    Disabled --> Authenticated: Admin Restores Account
     Authenticated --> InLobby: Student Sees Granted Tests (Phase 6)
     InLobby --> InProgress: Start Exam Clicked (Phase 7)
     

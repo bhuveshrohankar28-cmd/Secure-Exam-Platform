@@ -10,7 +10,7 @@ export type AttemptStatus = "in_progress" | "submitted" | "graded" | "force_subm
 
 export interface User {
   id: string;
-  rtfId: string;
+  username: string;
   name: string;
   email?: string;
   collegeEnrollmentNo?: string;
@@ -33,6 +33,7 @@ export interface Test {
   description: string;
   duration: number; // minutes
   totalMarks: number;
+  questionCount: number;
   status: TestStatus;
   createdBy: string;
   createdAt: string;

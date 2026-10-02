@@ -14,7 +14,7 @@ Express.js REST API   (business logic, auth, security)
 Firebase Admin SDK    (trusted server-side Firebase access)
        ↓
 Cloud Firestore       (database records & audit trail)
-JWT Session Engine    (RTF ID verification & admin approval authorization)
+JWT Session Engine    (username authentication & account access authorization)
 ```
 
 ---
@@ -30,14 +30,14 @@ JWT Session Engine    (RTF ID verification & admin approval authorization)
 ### The Solution
 
 The backend is the **sole authority**:
-- Students log in using their unique **RTF ID** (e.g. `RTF2024001`).
-- The backend verifies whether the student's RTF ID has been explicitly **Allowed** by an administrator (`isAllowed: true`).
-- If allowed, the backend issues a signed JWT session token.
-- If not approved yet, login is blocked with an informative pending approval message.
+- Anyone can create an account with a username and full name.
+- New accounts can sign in immediately; no organization membership or approval is required.
+- Administrators can disable an account when necessary, and test access is still managed separately.
+- The backend issues a signed JWT session token after successful login.
 
 The backend:
 - Verifies every token using signed JWT verification (`authMiddleware`)
-- Checks the student's `isAllowed` approval status
+- Checks whether account access has been disabled
 - Enforces role access (`student` vs `admin`) and test permissions
 
 ---
@@ -62,7 +62,7 @@ app/
 ```
 
 The frontend uses a centralized API client (`lib/api/client.ts`) which:
-- Automatically attaches the Firebase ID token to every request
+- Automatically attaches the session JWT to every request
 - Standardizes error handling
 - Provides typed responses
 
@@ -95,7 +95,7 @@ src/
 | Transport        | HTTPS (in production)                    |
 | HTTP headers     | Helmet                                   |
 | CORS             | Allowlist via `FRONTEND_URL` env var     |
-| Authentication   | Firebase ID token verification           |
+| Authentication   | Signed JWT verification                  |
 | Authorization    | Role-based (student / admin / superadmin)|
 | Input validation | Zod schemas in `/validators`             |
 | Secrets          | Environment variables only, never committed |

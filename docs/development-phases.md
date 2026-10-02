@@ -26,20 +26,18 @@ Each phase builds on the previous one. Do not skip phases.
 
 ---
 
-## Phase 2 — RTF ID Authentication & Admin Approval ✅ COMPLETE
+## Phase 2 — Open Account Access ✅ COMPLETE
 
-**Goal:** Students can register and log in with their RTF ID; only students approved/allowed by an administrator can access examinations.
+**Goal:** Anyone can create an account and sign in; administrators manage account access separately from test-specific permissions.
 
 **Deliverables:**
-- [x] Direct student login with unique RTF ID (no Firebase Auth, Google Auth, or email/password dependencies)
-- [x] Student registration form capturing RTF ID, Name, Domain, and Passing Year
-- [x] Admin approval verification gate (`isAllowed`) before granting exam access
-- [x] Informative pending approval feedback when an RTF ID is registered but not yet allowed
-- [x] Admin approval endpoints (`PATCH /api/admin/users/:userId/allow` and pre-approval)
-- [x] Interactive Admin user management table with one-click Allow/Revoke buttons
+- [x] Account creation and login using a general username and full name
+- [x] Immediate access for new accounts without membership checks or administrator approval
+- [x] Administrator controls for disabling or restoring account access
+- [x] Test-specific access remains managed independently
 - [x] Secure JWT session tokens issued by backend (`authMiddleware` verification)
 
-**Test:** Student enters RTF ID. If approved by admin, login succeeds and JWT token is issued. If pending, login is blocked with an approval alert.
+**Test:** A new user enters a username and full name, receives a session, and can access tests granted to their account.
 
 ---
 
@@ -59,14 +57,14 @@ Each phase builds on the previous one. Do not skip phases.
 
 ## Phase 4 — Admin Dashboard + User Management
 
-**Goal:** Admin can see all registered students with filtering.
+**Goal:** Admin can see all registered users with filtering.
 
 **Deliverables:**
 - [ ] `GET /api/admin/users` returns users from Firestore
 - [ ] Filtering by year, domain, branch, status
 - [ ] Online/offline based on `lastSeen` comparison
 - [ ] Search by name, email, enrollment number
-- [ ] Admin can approve/reject/block accounts
+- [ ] Admin can enable or disable account access
 
 **Test:** Admin sees all students with correct online/offline status.
 

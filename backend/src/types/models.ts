@@ -28,7 +28,7 @@ export type AccountStatus = "pending" | "active" | "rejected" | "blocked";
  */
 export interface User {
   id: string;
-  rtfId: string; // Unique student RTF ID for login
+  username: string;
   name: string;
   email?: string;
   collegeEnrollmentNo?: string;
@@ -39,7 +39,7 @@ export interface User {
   phone?: string;
   role: UserRole;
   accountStatus: AccountStatus;
-  isAllowed: boolean; // Set to true by Admin to allow student examination login
+  isAllowed: boolean; // Admins may disable account access
   /**
    * Updated by the heartbeat endpoint.
    * Used to determine online/offline status.
@@ -67,6 +67,7 @@ export interface Test {
   /** Duration in minutes */
   duration: number;
   totalMarks: number;
+  questionCount: number;
   status: TestStatus;
   createdBy: string; // userId of admin who created the test
   createdAt: ISOTimestamp;

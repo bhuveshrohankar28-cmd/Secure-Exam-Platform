@@ -1,14 +1,27 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
-import { updateLastSeen } from "../services/userService";
+import { getUserById, updateLastSeen } from "../services/userService";
 
 /**
  * GET /api/users/me
- * Returns the authenticated user's profile from Firestore.
- * Placeholder — full implementation in Phase 3.
+ * Returns the authenticated user's profile.
  */
-export function getMyProfile(req: AuthenticatedRequest, res: Response): void {
-  res.status(501).json({ success: false, error: "Not implemented yet. Coming in Phase 3." });
+export async function getMyProfile(
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> {
+  if (!req.user) {
+    res.status(401).json({ success: false, error: "Not authenticated." });
+    return;
+  }
+
+  const user = await getUserById(req.user.id);
+  if (!user) {
+    res.status(404).json({ success: false, error: "User record not found." });
+    return;
+  }
+
+  res.status(200).json({ success: true, data: user });
 }
 
 /**

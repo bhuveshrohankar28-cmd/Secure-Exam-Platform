@@ -2,17 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api/endpoints";
+import { setAuthToken } from "@/lib/api/client";
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    rtfId: "",
-    name: "",
-    email: "",
-    domain: "Software",
-    branch: "Computer Engineering",
-    yearOfPassing: 2027,
-  });
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -20,8 +17,8 @@ export default function RegisterPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!formData.rtfId.trim() || !formData.name.trim()) {
-      setError("Please provide both your RTF ID and Full Name.");
+    if (!username.trim() || !name.trim()) {
+      setError("Please provide both your username and full name.");
       return;
     }
 
@@ -30,15 +27,14 @@ export default function RegisterPage() {
     setSuccessMessage(null);
 
     try {
-      const response = await authApi.register(formData);
+      const response = await authApi.login(username.trim(), undefined, name.trim());
 
-      if (response.success) {
-        setSuccessMessage(
-          (response.data as { message?: string } | undefined)?.message ||
-            `Student registration complete! RTF ID "${formData.rtfId.toUpperCase()}" is now registered. Please wait for your exam administrator to allow your account before logging in.`
-        );
+      if (response.success && response.data?.token) {
+        setAuthToken(response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        router.push("/student/dashboard");
       } else {
-        setError(response.error || "Failed to register RTF ID.");
+        setError(response.error || "Could not create your account.");
       }
     } catch {
       setError("Could not reach backend server at http://localhost:5000.");
@@ -62,10 +58,10 @@ export default function RegisterPage() {
         <div style={{ textAlign: "center", marginBottom: "26px" }}>
           <div style={{ fontSize: "2.6rem", marginBottom: "6px" }}>📝</div>
           <h1 className="gradient-text" style={{ fontSize: "1.75rem", fontWeight: 800 }}>
-            Student Registration
+            Create an Account
           </h1>
           <p style={{ color: "var(--color-text-secondary)", marginTop: "6px", fontSize: "0.88rem" }}>
-            Register your RTF ID for examination access
+            Join the examination platform
           </p>
         </div>
 
@@ -126,14 +122,14 @@ export default function RegisterPage() {
               <label
                 style={{ fontSize: "0.82rem", color: "var(--color-text-secondary)", display: "block", marginBottom: "5px" }}
               >
-                RTF ID <span style={{ color: "#ef4444" }}>*</span>
+                Username <span style={{ color: "#ef4444" }}>*</span>
               </label>
               <input
                 type="text"
-                placeholder="e.g. RTF2024005"
+                placeholder="Choose a username"
                 required
-                value={formData.rtfId}
-                onChange={(e) => setFormData({ ...formData, rtfId: e.target.value.toUpperCase() })}
+                value={username}
+                onChange={(e) => setUsername(e.target.value.toUpperCase())}
                 style={{
                   width: "100%",
                   padding: "11px 14px",
@@ -153,14 +149,14 @@ export default function RegisterPage() {
               <label
                 style={{ fontSize: "0.82rem", color: "var(--color-text-secondary)", display: "block", marginBottom: "5px" }}
               >
-                Full Student Name <span style={{ color: "#ef4444" }}>*</span>
+                Full Name <span style={{ color: "#ef4444" }}>*</span>
               </label>
               <input
                 type="text"
                 placeholder="e.g. Yash Patel"
                 required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 style={{
                   width: "100%",
                   padding: "11px 14px",
@@ -172,58 +168,6 @@ export default function RegisterPage() {
                   outline: "none",
                 }}
               />
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-              <div>
-                <label
-                  style={{ fontSize: "0.82rem", color: "var(--color-text-secondary)", display: "block", marginBottom: "5px" }}
-                >
-                  Domain
-                </label>
-                <select
-                  value={formData.domain}
-                  onChange={(e) => setFormData({ ...formData, domain: e.target.value })}
-                  style={{
-                    width: "100%",
-                    padding: "11px 12px",
-                    background: "#1e2235",
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "8px",
-                    color: "var(--color-text-primary)",
-                    fontSize: "0.9rem",
-                    outline: "none",
-                  }}
-                >
-                  <option value="Software">Software</option>
-                  <option value="Electrical">Electrical</option>
-                  <option value="Mechanical">Mechanical</option>
-                  <option value="Civil">Civil</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  style={{ fontSize: "0.82rem", color: "var(--color-text-secondary)", display: "block", marginBottom: "5px" }}
-                >
-                  Passing Year
-                </label>
-                <input
-                  type="number"
-                  value={formData.yearOfPassing}
-                  onChange={(e) => setFormData({ ...formData, yearOfPassing: Number(e.target.value) })}
-                  style={{
-                    width: "100%",
-                    padding: "11px 12px",
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "8px",
-                    color: "var(--color-text-primary)",
-                    fontSize: "0.9rem",
-                    outline: "none",
-                  }}
-                />
-              </div>
             </div>
 
             <button
@@ -244,15 +188,15 @@ export default function RegisterPage() {
                 opacity: loading ? 0.7 : 1,
               }}
             >
-              {loading ? "Registering..." : "Submit RTF ID for Approval"}
+              {loading ? "Creating account..." : "Create Account"}
             </button>
           </form>
         )}
 
         <p style={{ textAlign: "center", marginTop: "22px", fontSize: "0.85rem", color: "var(--color-text-secondary)" }}>
-          Already registered?{" "}
-          <Link href="/login" style={{ color: "#4f8ef7", textDecoration: "none", fontWeight: 600 }}>
-            Sign In with RTF ID
+          Already have an account?{" "}
+          <Link href="/" style={{ color: "#4f8ef7", textDecoration: "none", fontWeight: 600 }}>
+            Sign In
           </Link>
         </p>
       </div>

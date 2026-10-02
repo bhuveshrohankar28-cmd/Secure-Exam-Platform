@@ -6,8 +6,7 @@ let db: Firestore | null = null;
 
 /**
  * Initializes Firebase Admin SDK for Firestore database storage.
- * Note: Firebase Authentication has been removed in favor of direct
- * RTF ID verification and Admin approval authorization.
+ * Authentication uses platform usernames and JWTs; Firestore stores profiles and tests.
  */
 function initializeFirebase(): void {
   if (getApps().length > 0) {
@@ -23,7 +22,7 @@ function initializeFirebase(): void {
   if (!projectId || !clientEmail || !privateKey) {
     console.warn(
       "[Firebase] Missing Firebase environment variables. Firestore not connected.\n" +
-        "  Running in local memory fallback mode for student RTF ID & test data."
+        "  Running in local memory fallback mode for user & test data."
     );
     return;
   }

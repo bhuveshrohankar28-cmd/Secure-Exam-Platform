@@ -304,10 +304,9 @@ Follow this complete manual test runbook to validate a mobile exam release:
 
 [2] Registration & Login Check
     ├── Open /register on mobile
-    ├── Fill RTF ID, Name, Domain, Passing Year
-    ├── Submit -> verify clean pending alert on mobile screen
-    ├── On PC Admin: Allow the RTF ID
-    └── On Phone: Login with RTF ID -> verify redirect to /student/dashboard
+    ├── Choose a username and enter your full name
+    ├── Submit -> verify account is created and signed in immediately
+    └── Verify redirect to /student/dashboard
 
 [3] Pre-Exam Briefing Check
     ├── Select active test from dashboard

@@ -5,18 +5,30 @@ import {
   createTest,
   updateTest,
   deleteTest,
+  importQuestions,
 } from "../controllers/testController";
-import { verifyToken, requireRole } from "../middleware/authMiddleware";
+import {
+  verifyToken,
+  requireRole,
+  requireAllowedStudent,
+} from "../middleware/authMiddleware";
 
 const router = Router();
 
-// GET /api/tests — accessible to authenticated users
-router.get("/", verifyToken, getTests);
-router.get("/:id", verifyToken, getTestById);
+const adminOnly = [verifyToken, requireRole(["admin", "superadmin"])];
 
-// Write operations — admin/superadmin only
-router.post("/", verifyToken, requireRole(["admin", "superadmin"]), createTest);
-router.put("/:id", verifyToken, requireRole(["admin", "superadmin"]), updateTest);
-router.delete("/:id", verifyToken, requireRole(["admin", "superadmin"]), deleteTest);
+// GET /api/tests — admin: all tests, student: active tests only
+router.get("/", verifyToken, requireAllowedStudent, getTests);
+
+// GET /api/tests/:id — admin: test + questions with answers, student: summary only
+router.get("/:id", verifyToken, requireAllowedStudent, getTestById);
+
+// Admin-only write operations
+router.post("/", ...adminOnly, createTest);
+router.put("/:id", ...adminOnly, updateTest);
+router.delete("/:id", ...adminOnly, deleteTest);
+
+// POST /api/tests/:id/questions/import — admin pastes/uploads questions as JSON
+router.post("/:id/questions/import", ...adminOnly, importQuestions);
 
 export default router;

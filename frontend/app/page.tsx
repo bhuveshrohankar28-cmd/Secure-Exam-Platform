@@ -1,30 +1,92 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { healthApi } from "@/lib/api/endpoints";
+import { useRouter } from "next/navigation";
+import { authApi } from "@/lib/api/endpoints";
+import { setAuthToken } from "@/lib/api/client";
 
-type ConnectionStatus = "checking" | "connected" | "disconnected";
+const ADMIN_USERNAME = "ADMIN001";
 
-export default function HomePage() {
-  const [status, setStatus] = useState<ConnectionStatus>("checking");
-  const [backendMessage, setBackendMessage] = useState<string>("");
-  const [timestamp, setTimestamp] = useState<string>("");
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "13px 16px",
+  background: "rgba(255,255,255,0.05)",
+  border: "1px solid var(--color-border)",
+  borderRadius: "10px",
+  color: "var(--color-text-primary)",
+  fontSize: "1rem", // 16px stops iOS Safari zooming on focus
+  outline: "none",
+};
 
-  useEffect(() => {
-    async function checkBackend() {
-      const result = await healthApi.check();
-      if (result.success && result.data) {
-        const data = result.data as { message: string; timestamp: string };
-        setStatus("connected");
-        setBackendMessage(data.message);
-        setTimestamp(data.timestamp);
-      } else {
-        setStatus("disconnected");
-      }
+const labelStyle: React.CSSProperties = {
+  fontSize: "0.85rem",
+  color: "var(--color-text-secondary)",
+  display: "block",
+  marginBottom: "8px",
+  fontWeight: 600,
+};
+
+export default function LoginPage() {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const isAdmin = username.trim().toUpperCase() === ADMIN_USERNAME;
+
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!username.trim()) {
+      setError("Please enter your username.");
+      return;
     }
-    checkBackend();
-  }, []);
+    if (isAdmin && !password) {
+      setError("Please enter the admin password.");
+      return;
+    }
+    if (!isAdmin && !name.trim()) {
+      setError("Please enter your full name.");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await authApi.login(
+        username.trim(),
+        isAdmin ? password : undefined,
+        isAdmin ? undefined : name.trim()
+      );
+
+      const token = response.data?.token || (response as unknown as { token?: string }).token;
+      const user = response.data?.user || (response as unknown as { user?: { role?: string } }).user;
+
+      if (response.success && token) {
+        setAuthToken(token);
+        if (typeof window !== "undefined" && user) {
+          localStorage.setItem("user", JSON.stringify(user));
+        }
+
+        const role = user?.role;
+        if (role === "admin" || role === "superadmin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/student/dashboard");
+        }
+      } else {
+        setError(response.error || "Login failed. Please check your details.");
+      }
+    } catch {
+      setError("Unable to connect to the backend server. Is it running on port 5000?");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <main
@@ -32,335 +94,124 @@ export default function HomePage() {
         minHeight: "100vh",
         background: "var(--gradient-hero)",
         display: "flex",
-        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         padding: "24px 16px",
-        position: "relative",
-        overflow: "hidden",
       }}
     >
-      {/* Decorative background blobs */}
-      <div
-        aria-hidden
-        style={{
-          position: "absolute",
-          top: "-200px",
-          right: "-200px",
-          width: "600px",
-          height: "600px",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(79,142,247,0.08) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        aria-hidden
-        style={{
-          position: "absolute",
-          bottom: "-200px",
-          left: "-200px",
-          width: "600px",
-          height: "600px",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: "48px", position: "relative" }}>
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            background: "rgba(79,142,247,0.1)",
-            border: "1px solid rgba(79,142,247,0.2)",
-            borderRadius: "999px",
-            padding: "6px 16px",
-            fontSize: "0.8rem",
-            color: "#4f8ef7",
-            marginBottom: "24px",
-            letterSpacing: "0.05em",
-            textTransform: "uppercase",
-            fontWeight: 600,
-          }}
-        >
-          <span>🎓</span>
-          <span>College Examination Platform</span>
+      <div className="glass-card" style={{ padding: "36px 30px", width: "100%", maxWidth: "440px" }}>
+        <div style={{ textAlign: "center", marginBottom: "28px" }}>
+          <div style={{ fontSize: "2.8rem", marginBottom: "6px" }}>🛡️</div>
+          <h1 className="gradient-text" style={{ fontSize: "1.75rem", fontWeight: 800 }}>
+            Examination Portal
+          </h1>
+          <p style={{ color: "var(--color-text-secondary)", marginTop: "6px", fontSize: "0.88rem" }}>
+            Sign in or create an account to access available tests
+          </p>
         </div>
 
-        <h1
-          className="gradient-text"
-          style={{
-            fontSize: "clamp(2rem, 6vw, 3.5rem)",
-            fontWeight: 800,
-            lineHeight: 1.1,
-            marginBottom: "16px",
-            letterSpacing: "-0.02em",
-          }}
-        >
-          Secure Exam Platform
-        </h1>
-
-        <p
-          style={{
-            color: "var(--color-text-secondary)",
-            fontSize: "clamp(1rem, 2.5vw, 1.2rem)",
-            maxWidth: "480px",
-            margin: "0 auto",
-            lineHeight: 1.7,
-          }}
-        >
-          A browser-based MCQ examination system with integrity monitoring,
-          real-time access control, and detailed analytics.
-        </p>
-      </div>
-
-      {/* Backend Status Card */}
-      <div
-        id="backend-status-card"
-        className="glass-card"
-        style={{
-          padding: "24px 32px",
-          marginBottom: "40px",
-          minWidth: "min(360px, 100%)",
-          textAlign: "center",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "0.8rem",
-            color: "var(--color-text-secondary)",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
-            fontWeight: 600,
-            marginBottom: "12px",
-          }}
-        >
-          Backend Connection
-        </p>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-            fontSize: "1.1rem",
-            fontWeight: 600,
-          }}
-        >
-          {status === "checking" && (
-            <>
-              <span
-                style={{
-                  width: "10px",
-                  height: "10px",
-                  borderRadius: "50%",
-                  background: "#f59e0b",
-                  animation: "pulse 1s infinite",
-                }}
-              />
-              <span style={{ color: "#f59e0b" }}>Checking…</span>
-            </>
-          )}
-          {status === "connected" && (
-            <>
-              <span
-                style={{
-                  width: "10px",
-                  height: "10px",
-                  borderRadius: "50%",
-                  background: "#10b981",
-                }}
-              />
-              <span id="backend-status-text" style={{ color: "#10b981" }}>
-                Backend Status: Connected ✓
-              </span>
-            </>
-          )}
-          {status === "disconnected" && (
-            <>
-              <span
-                style={{
-                  width: "10px",
-                  height: "10px",
-                  borderRadius: "50%",
-                  background: "#ef4444",
-                }}
-              />
-              <span id="backend-status-text" style={{ color: "#ef4444" }}>
-                Backend Status: Disconnected
-              </span>
-            </>
-          )}
-        </div>
-
-        {backendMessage && (
-          <p
+        {error && (
+          <div
             style={{
-              marginTop: "8px",
+              background: "rgba(239, 68, 68, 0.12)",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
+              borderRadius: "10px",
+              padding: "12px 16px",
+              marginBottom: "20px",
+              color: "#f87171",
               fontSize: "0.85rem",
-              color: "var(--color-text-secondary)",
             }}
           >
-            {backendMessage}
-          </p>
+            {error}
+          </div>
         )}
-        {timestamp && (
-          <p style={{ marginTop: "4px", fontSize: "0.75rem", color: "var(--color-border)" }}>
-            {new Date(timestamp).toLocaleString()}
-          </p>
-        )}
-        {status === "disconnected" && (
-          <p
-            style={{
-              marginTop: "10px",
-              fontSize: "0.82rem",
-              color: "var(--color-text-secondary)",
-            }}
-          >
-            Make sure the backend is running at{" "}
-            <code
+
+        <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div>
+            <label htmlFor="login-username" style={labelStyle}>
+              Username
+            </label>
+            <input
+              id="login-username"
+              type="text"
+              placeholder="Choose or enter a username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value.toUpperCase())}
+              disabled={loading}
+              autoFocus
+              autoCapitalize="characters"
+              autoCorrect="off"
               style={{
-                background: "rgba(255,255,255,0.05)",
-                borderRadius: "4px",
-                padding: "1px 6px",
+                ...inputStyle,
+                letterSpacing: "0.04em",
                 fontFamily: "monospace",
+                fontWeight: 600,
               }}
-            >
-              http://localhost:5000
-            </code>
-          </p>
-        )}
-      </div>
-
-      {/* Navigation Cards */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: "16px",
-          width: "100%",
-          maxWidth: "600px",
-          marginBottom: "40px",
-        }}
-      >
-        <Link
-          id="nav-student-login"
-          href="/login"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "10px",
-            padding: "24px",
-            background: "rgba(79,142,247,0.07)",
-            border: "1px solid rgba(79,142,247,0.2)",
-            borderRadius: "16px",
-            textDecoration: "none",
-            color: "var(--color-text-primary)",
-            transition: "all 0.2s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(79,142,247,0.15)";
-            e.currentTarget.style.borderColor = "rgba(79,142,247,0.4)";
-            e.currentTarget.style.transform = "translateY(-2px)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(79,142,247,0.07)";
-            e.currentTarget.style.borderColor = "rgba(79,142,247,0.2)";
-            e.currentTarget.style.transform = "translateY(0)";
-          }}
-        >
-          <span style={{ fontSize: "2rem" }}>📚</span>
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontWeight: 700, marginBottom: "4px" }}>Student Login</div>
-            <div style={{ fontSize: "0.8rem", color: "var(--color-text-secondary)" }}>
-              Take exams &amp; view results
-            </div>
+            />
           </div>
-        </Link>
 
-        <Link
-          id="nav-admin-login"
-          href="/login?role=admin"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "10px",
-            padding: "24px",
-            background: "rgba(139,92,246,0.07)",
-            border: "1px solid rgba(139,92,246,0.2)",
-            borderRadius: "16px",
-            textDecoration: "none",
-            color: "var(--color-text-primary)",
-            transition: "all 0.2s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(139,92,246,0.15)";
-            e.currentTarget.style.borderColor = "rgba(139,92,246,0.4)";
-            e.currentTarget.style.transform = "translateY(-2px)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(139,92,246,0.07)";
-            e.currentTarget.style.borderColor = "rgba(139,92,246,0.2)";
-            e.currentTarget.style.transform = "translateY(0)";
-          }}
-        >
-          <span style={{ fontSize: "2rem" }}>🛡️</span>
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontWeight: 700, marginBottom: "4px" }}>Admin Panel</div>
-            <div style={{ fontSize: "0.8rem", color: "var(--color-text-secondary)" }}>
-              Manage tests &amp; students
+          {isAdmin ? (
+            <div>
+              <label htmlFor="login-password" style={labelStyle}>
+                Admin Password
+              </label>
+              <input
+                id="login-password"
+                type="password"
+                placeholder="Admin password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+                style={inputStyle}
+              />
             </div>
-          </div>
-        </Link>
-      </div>
+          ) : (
+            <div>
+              <label htmlFor="login-name" style={labelStyle}>
+                Full Name
+              </label>
+              <input
+                id="login-name"
+                type="text"
+                placeholder="e.g. Yash Patel"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={loading}
+                autoComplete="name"
+                style={inputStyle}
+              />
+            </div>
+          )}
 
-      {/* Feature Pills */}
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "8px",
-          justifyContent: "center",
-          maxWidth: "600px",
-        }}
-      >
-        {[
-          "🔐 Firebase Auth",
-          "⚡ Real-time Heartbeat",
-          "📋 Test Access Control",
-          "🔍 Browser Monitoring",
-          "📊 Analytics",
-          "📱 Mobile-First",
-        ].map((feature) => (
-          <span
-            key={feature}
+          <button
+            id="login-submit"
+            type="submit"
+            disabled={loading}
             style={{
-              padding: "6px 14px",
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid var(--color-border)",
-              borderRadius: "999px",
-              fontSize: "0.8rem",
-              color: "var(--color-text-secondary)",
+              width: "100%",
+              padding: "14px",
+              background: "var(--gradient-primary)",
+              border: "none",
+              borderRadius: "10px",
+              color: "white",
+              fontWeight: 700,
+              fontSize: "1rem",
+              cursor: loading ? "wait" : "pointer",
+              opacity: loading ? 0.7 : 1,
+              marginTop: "4px",
+              boxShadow: "0 4px 16px rgba(79, 142, 247, 0.3)",
             }}
           >
-            {feature}
-          </span>
-        ))}
+            {loading ? "Signing in..." : "Enter Examination Portal →"}
+          </button>
+        </form>
+        <p style={{ margin: "20px 0 0", textAlign: "center", color: "var(--color-text-secondary)", fontSize: "0.88rem" }}>
+          New here?{" "}
+          <Link href="/register" style={{ color: "var(--color-accent-blue)", fontWeight: 600 }}>
+            Create an account
+          </Link>
+        </p>
       </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.4; }
-        }
-      `}</style>
     </main>
   );
 }

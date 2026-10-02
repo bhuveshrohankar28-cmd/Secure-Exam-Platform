@@ -1,10 +1,8 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
-import dotenv from "dotenv";
-
-// Load environment variables before importing anything that uses them
-dotenv.config();
+import "dotenv/config";
+import rateLimit from "express-rate-limit";
 
 // Initialize Firebase Admin SDK
 import "./firebase/firebaseAdmin";
@@ -56,6 +54,22 @@ app.use(
 // ------------------------------------------------------------------
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
+
+// ------------------------------------------------------------------
+// Rate limiting
+// Login can create accounts, so limit it. The limit is per IP and a hall of
+// phones on one router shares one IP, so keep it generous.
+// ------------------------------------------------------------------
+app.use(
+  "/api/auth/login",
+  rateLimit({
+    windowMs: 60 * 1000,
+    limit: 200,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, error: "Too many login attempts. Please wait a minute." },
+  })
+);
 
 // ------------------------------------------------------------------
 // API Routes

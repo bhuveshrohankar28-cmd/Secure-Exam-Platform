@@ -8,7 +8,7 @@ import { UserRole } from "../types/models";
 export interface AuthenticatedUser {
   id: string;
   uid: string;
-  rtfId: string;
+  username: string;
   name: string;
   role: UserRole;
   isAllowed: boolean;
@@ -45,7 +45,7 @@ export function verifyToken(
   if (!payload) {
     res.status(401).json({
       success: false,
-      error: "Invalid or expired session token. Please log in with your RTF ID again.",
+      error: "Invalid or expired session token. Please log in again.",
     });
     return;
   }
@@ -53,7 +53,7 @@ export function verifyToken(
   req.user = {
     id: payload.id,
     uid: payload.id,
-    rtfId: payload.rtfId,
+    username: payload.username,
     name: payload.name,
     role: payload.role,
     isAllowed: payload.isAllowed,
@@ -84,7 +84,7 @@ export function requireRole(allowedRoles: UserRole[]) {
 
 /**
  * requireAllowedStudent — Middleware
- * Enforces that a student must have been approved (isAllowed = true) by an administrator.
+ * Enforces that a student account has not been disabled by an administrator.
  */
 export function requireAllowedStudent(
   req: AuthenticatedRequest,
@@ -99,7 +99,7 @@ export function requireAllowedStudent(
   if (!req.user?.isAllowed) {
     res.status(403).json({
       success: false,
-      error: "Your RTF ID has not been approved by an administrator yet.",
+      error: "Your account access has been disabled. Please contact the administrator.",
     });
     return;
   }

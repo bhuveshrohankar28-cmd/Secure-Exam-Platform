@@ -141,7 +141,7 @@ secure-exam-platform/
 - **Language:** TypeScript with `tsc` compilation & `ts-node` / `nodemon` in development
 - **Security:** [Helmet](https://helmetjs.github.io/) for HTTP security headers, [CORS](https://github.com/expressjs/cors) for controlled cross-origin requests
 - **Database:** Cloud Firestore via [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) (v14+)
-- **Authentication:** Custom Student RTF ID Verification & Admin Approval with [JSON Web Tokens (JWT)](https://jwt.io/) (No Firebase Auth or Google Auth required)
+- **Authentication:** Open username-based accounts with [JSON Web Tokens (JWT)](https://jwt.io/); no organization membership or administrator approval required
 - **Validation:** [Zod](https://zod.dev/) for robust runtime request schema validation
 
 ---
@@ -288,7 +288,7 @@ Modules are loosely coupled and communicate through the documented REST API cont
 
 | Module | Owner / Focus | Core Files & Areas |
 |:-------|:--------------|:-------------------|
-| **Module 1** | **RTF ID Authentication & User Management** | `backend/src/routes/authRoutes.ts`, `backend/src/middleware/authMiddleware.ts`, `backend/src/utils/token.ts`, `frontend/app/login`, `frontend/app/register`, RTF ID verification & admin approval gate |
+| **Module 1** | **Authentication & User Management** | `backend/src/routes/authRoutes.ts`, `backend/src/middleware/authMiddleware.ts`, `backend/src/utils/token.ts`, `frontend/app/login`, `frontend/app/register`, public username-based account access |
 | **Module 2** | **Admin Dashboard & Test Access** | `frontend/app/admin/*`, `backend/src/routes/accessRoutes.ts`, access control by branch/year/domain |
 | **Module 3** | **Test Builder & Question Management** | `backend/src/routes/testRoutes.ts`, question bank schema, test options, MCQ CRUD interface |
 | **Module 4** | **Student Examination Interface & Engine** | `frontend/app/student/*`, timer countdown, responsive mobile question navigation, test submission |
@@ -301,7 +301,7 @@ Modules are loosely coupled and communicate through the documented REST API cont
 The project adheres to structured iterative phases:
 
 - [x] **Phase 1: Project Foundation** ✅ COMPLETE — Directory architecture, TypeScript types, Express skeleton, Next.js UI scaffolding, and documentation.
-- [x] **Phase 2: RTF ID Authentication & Admin Approval** ✅ COMPLETE — Direct student login via RTF ID, Admin approval verification gate (`isAllowed`), signed JWT session tokens, and interactive admin user approval management.
+- [x] **Phase 2: Open Account Access** ✅ COMPLETE — Username-based account creation and login, signed JWT sessions, and administrator account access controls.
 - [ ] **Phase 3: User Management & Heartbeats** — Student profile completion, enrollment verification, and presence heartbeats (`lastSeen`).
 - [ ] **Phase 4: Admin Dashboard** — Metrics overview, student directory table, and status filtering.
 - [ ] **Phase 5: Test Creation & Question Bank** — MCQ authoring, question randomization, and duration limits.
