@@ -62,6 +62,7 @@ export type TestStatus = "draft" | "scheduled" | "active" | "completed" | "archi
  */
 export interface Test {
   id: string;
+  testCode:string;
   title: string;
   description: string;
   /** Duration in minutes */
@@ -132,11 +133,17 @@ export type AttemptStatus = "in_progress" | "submitted" | "graded" | "force_subm
 export interface TestAttempt {
   id: string;
   testId: string;
+  testTitle: string;
   userId: string;
+  userName: string;
   status: AttemptStatus;
   startedAt: ISOTimestamp;
+  endsAt: ISOTimestamp;
   submittedAt: ISOTimestamp | null;
   score: number | null; // null until graded
+  totalMarks: number | null;
+  correctCount: number | null;
+  answeredCount: number | null;
   gradedAt: ISOTimestamp | null;
 }
 

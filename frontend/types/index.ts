@@ -29,6 +29,7 @@ export interface User {
 
 export interface Test {
   id: string;
+  testCode: string;
   title: string;
   description: string;
   duration: number; // minutes
@@ -66,12 +67,25 @@ export interface TestAccess {
 export interface TestAttempt {
   id: string;
   testId: string;
+  testTitle: string;
+  userName?: string;
   userId: string;
   status: AttemptStatus;
   startedAt: string;
+  endsAt: string;
   submittedAt: string | null;
   score: number | null;
+  totalMarks: number | null;
+  correctCount: number | null;
+  answeredCount: number | null;
   gradedAt: string | null;
+}
+
+export interface QuestionInput {
+  text: string;
+  options: [string, string, string, string];
+  correctOptionIndex: number;
+  marks: number;
 }
 
 /** Health check response */

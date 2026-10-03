@@ -1,162 +1,72 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { adminApi, AttemptView } from "@/lib/api/endpoints";
+import { Test, User } from "@/types";
 
-export const metadata: Metadata = {
-  title: "Admin Dashboard",
-  description: "Manage exams, students, and access",
-};
-
-const NAV_ITEMS = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: "🏠", id: "nav-admin-dashboard" },
-  { href: "/admin/users", label: "Users", icon: "👥", id: "nav-admin-users" },
-  { href: "/admin/tests", label: "Tests", icon: "📋", id: "nav-admin-tests" },
-  { href: "/admin/attempts", label: "Attempts", icon: "📝", id: "nav-admin-attempts" },
-  { href: "/admin/reports", label: "Reports", icon: "📊", id: "nav-admin-reports" },
-];
-
-const STATS = [
-  { label: "Total Students", value: "—", icon: "👥", color: "#4f8ef7" },
-  { label: "Active Tests", value: "—", icon: "📋", color: "#10b981" },
-  { label: "Attempts Today", value: "—", icon: "📝", color: "#8b5cf6" },
-  { label: "Online Now", value: "—", icon: "🟢", color: "#f59e0b" },
+const navItems = [
+  ["Dashboard", "/admin/dashboard"], ["Users", "/admin/users"], ["Tests", "/admin/tests"],
+  ["Test Access", "/admin/access"], ["Attempts", "/admin/attempts"], ["Reports", "/admin/reports"],
 ];
 
 export default function AdminDashboardPage() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [tests, setTests] = useState<Test[]>([]);
+  const [attempts, setAttempts] = useState<AttemptView[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    Promise.all([adminApi.getUsers(), adminApi.getTests(), adminApi.getAttempts()])
+      .then(([userResponse, testResponse, attemptResponse]) => {
+        if (!active) return;
+        const failures = [userResponse, testResponse, attemptResponse].filter((response) => !response.success);
+        if (failures.length) setError(failures.map((response) => response.error).filter(Boolean).join(" "));
+        if (Array.isArray(userResponse.data)) setUsers(userResponse.data);
+        if (Array.isArray(testResponse.data)) setTests(testResponse.data);
+        if (Array.isArray(attemptResponse.data)) setAttempts(attemptResponse.data);
+        setLoading(false);
+      }).catch((loadError: unknown) => {
+        console.error("[AdminDashboard] Failed to load metrics:", loadError);
+        if (active) {
+          setError("Could not load dashboard metrics.");
+          setLoading(false);
+        }
+      });
+    return () => { active = false; };
+  }, []);
+
+  const today = new Date().toDateString();
+  const stats = [
+    { label: "Students", value: users.filter((user) => user.role === "student").length, icon: "👥", color: "#4f8ef7" },
+    { label: "Active tests", value: tests.filter((test) => test.status === "active").length, icon: "📋", color: "#10b981" },
+    { label: "Attempts today", value: attempts.filter((attempt) => new Date(attempt.startedAt).toDateString() === today).length, icon: "📝", color: "#8b5cf6" },
+    { label: "In progress", value: attempts.filter((attempt) => attempt.status === "in_progress").length, icon: "⏱️", color: "#f59e0b" },
+  ];
+
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--color-bg-primary)" }}>
-      {/* Sidebar */}
-      <aside
-        style={{
-          width: "240px",
-          background: "var(--color-bg-secondary)",
-          borderRight: "1px solid var(--color-border)",
-          padding: "24px 0",
-          flexShrink: 0,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div style={{ padding: "0 20px 24px", borderBottom: "1px solid var(--color-border)" }}>
-          <div style={{ fontSize: "1.5rem", marginBottom: "4px" }}>🛡️</div>
-          <div style={{ fontWeight: 800, fontSize: "1rem" }}>Admin Panel</div>
-          <div style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)" }}>
-            Exam Platform
-          </div>
-        </div>
-
-        <nav style={{ padding: "12px 12px", flex: 1 }}>
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              id={item.id}
-              href={item.href}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                padding: "10px 12px",
-                borderRadius: "10px",
-                textDecoration: "none",
-                color: item.href === "/admin/dashboard" ? "var(--color-text-primary)" : "var(--color-text-secondary)",
-                background: item.href === "/admin/dashboard" ? "rgba(79,142,247,0.1)" : "transparent",
-                fontSize: "0.9rem",
-                fontWeight: item.href === "/admin/dashboard" ? 600 : 400,
-                marginBottom: "4px",
-                transition: "all 0.2s",
-              }}
-            >
-              <span>{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <div style={{ padding: "16px 20px", borderTop: "1px solid var(--color-border)", fontSize: "0.8rem", color: "var(--color-text-secondary)" }}>
-          Admin User
-        </div>
+      <aside style={{ width: "220px", background: "var(--color-bg-secondary)", borderRight: "1px solid var(--color-border)", padding: "24px 12px" }}>
+        <strong style={{ display: "block", padding: "0 8px 20px" }}>Admin Panel</strong>
+        <nav style={{ display: "grid", gap: "4px" }}>{navItems.map(([label, href]) => <Link key={href} href={href} style={{ padding: "10px", borderRadius: "8px", textDecoration: "none", color: href === "/admin/dashboard" ? "var(--color-text-primary)" : "var(--color-text-secondary)", background: href === "/admin/dashboard" ? "rgba(79,142,247,.1)" : "transparent" }}>{label}</Link>)}</nav>
       </aside>
-
-      {/* Main Content */}
-      <main style={{ flex: 1, padding: "32px", overflow: "auto" }}>
-        <div style={{ marginBottom: "32px" }}>
-          <h1 style={{ fontSize: "1.6rem", fontWeight: 800, marginBottom: "6px" }}>
-            Admin Dashboard
-          </h1>
-          <p style={{ color: "var(--color-text-secondary)", fontSize: "0.9rem" }}>
-            Overview of the examination platform.
-          </p>
+      <main style={{ flex: 1, padding: "30px", overflow: "auto" }}>
+        <h1 style={{ fontSize: "1.6rem", fontWeight: 800 }}>Admin Dashboard</h1>
+        <p style={{ color: "var(--color-text-secondary)", margin: "6px 0 24px" }}>Live overview of exams, students, and submissions.</p>
+        {error && <div role="alert" style={{ color: "#f87171", marginBottom: "18px" }}>{error}</div>}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "14px", marginBottom: "30px" }}>
+          {stats.map((stat) => <div key={stat.label} className="glass-card" style={{ padding: "22px" }}><div style={{ fontSize: "1.4rem" }}>{stat.icon}</div><div style={{ fontSize: "1.9rem", fontWeight: 800, color: stat.color, marginTop: "8px" }}>{loading ? "…" : stat.value}</div><div style={{ color: "var(--color-text-secondary)", fontSize: ".84rem" }}>{stat.label}</div></div>)}
         </div>
-
-        <div
-          style={{
-            background: "rgba(245, 158, 11, 0.08)",
-            border: "1px solid rgba(245, 158, 11, 0.2)",
-            borderRadius: "12px",
-            padding: "14px 20px",
-            marginBottom: "32px",
-            fontSize: "0.85rem",
-            color: "#f59e0b",
-          }}
-        >
-          🚧 <strong>Foundation:</strong> Dashboard analytics, live monitoring, and real data will be connected in Phases 4–11.
+        <h2 style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: "12px" }}>Quick actions</h2>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+          {[["Create / manage tests", "/admin/tests"], ["Manage students", "/admin/users"], ["Grant test access", "/admin/access"], ["Review attempts", "/admin/attempts"], ["View reports", "/admin/reports"]].map(([label, href]) => <Link key={href} href={href} className="glass-card" style={{ padding: "14px 18px", textDecoration: "none", color: "var(--color-text-primary)" }}>{label} →</Link>)}
         </div>
-
-        {/* Stats Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-            gap: "16px",
-            marginBottom: "40px",
-          }}
-        >
-          {STATS.map((stat) => (
-            <div key={stat.label} className="glass-card" style={{ padding: "24px" }}>
-              <div style={{ fontSize: "1.5rem", marginBottom: "8px" }}>{stat.icon}</div>
-              <div style={{ fontSize: "2rem", fontWeight: 800, color: stat.color }}>
-                {stat.value}
-              </div>
-              <div style={{ fontSize: "0.82rem", color: "var(--color-text-secondary)", marginTop: "4px" }}>
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Quick Links */}
-        <h2 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "16px" }}>
-          Quick Actions
-        </h2>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
-          {[
-            { label: "View All Students", href: "/admin/users", icon: "👥", id: "quick-link-users" },
-            { label: "Create New Test", href: "/admin/tests", icon: "➕", id: "quick-link-create-test" },
-            { label: "Grant Test Access", href: "/admin/users", icon: "🔑", id: "quick-link-grant-access" },
-            { label: "View Attempts", href: "/admin/attempts", icon: "📝", id: "quick-link-attempts" },
-          ].map((action) => (
-            <Link
-              key={action.href + action.label}
-              id={action.id}
-              href={action.href}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 20px",
-                background: "var(--color-bg-card)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "10px",
-                textDecoration: "none",
-                color: "var(--color-text-primary)",
-                fontSize: "0.85rem",
-                fontWeight: 500,
-              }}
-            >
-              <span>{action.icon}</span>
-              <span>{action.label}</span>
-            </Link>
-          ))}
-        </div>
+        <section style={{ marginTop: "30px" }}>
+          <h2 style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: "12px" }}>Recent attempts</h2>
+          {loading ? <p style={{ color: "var(--color-text-secondary)" }}>Loading…</p> : attempts.length === 0 ? <p style={{ color: "var(--color-text-secondary)" }}>No exam attempts recorded yet.</p> : <div className="glass-card" style={{ padding: "12px" }}>{attempts.slice(0, 5).map((attempt) => <div key={attempt.id} style={{ display: "flex", justifyContent: "space-between", gap: "12px", padding: "10px", borderBottom: "1px solid var(--color-border)" }}><span>{attempt.userName || "Student"} · {attempt.testTitle}</span><span style={{ color: "var(--color-text-secondary)" }}>{attempt.status.replace("_", " ")}</span></div>)}</div>}
+        </section>
       </main>
     </div>
   );

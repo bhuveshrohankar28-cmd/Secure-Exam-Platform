@@ -16,49 +16,6 @@ interface Student {
   online?: boolean;
 }
 
-const INITIAL_STUDENTS: Student[] = [
-  {
-    id: "usr_1",
-    username: "ARJUN2024001",
-    name: "Arjun Sharma",
-    domain: "Software",
-    branch: "Computer Engineering",
-    yearOfPassing: 2027,
-    isAllowed: true,
-    online: true,
-  },
-  {
-    id: "usr_2",
-    username: "PRIYA2024002",
-    name: "Priya Patel",
-    domain: "Electrical",
-    branch: "Electrical Engineering",
-    yearOfPassing: 2027,
-    isAllowed: true,
-    online: false,
-  },
-  {
-    id: "usr_3",
-    username: "RAHUL2024003",
-    name: "Rahul Mehta",
-    domain: "Mechanical",
-    branch: "Mechanical Engineering",
-    yearOfPassing: 2026,
-    isAllowed: true,
-    online: false,
-  },
-  {
-    id: "usr_4",
-    username: "SNEHA2024004",
-    name: "Sneha Joshi",
-    domain: "Software",
-    branch: "Computer Engineering",
-    yearOfPassing: 2027,
-    isAllowed: false,
-    online: false,
-  },
-];
-
 const NAV_ITEMS = [
   { href: "/admin/dashboard", label: "Dashboard", icon: "🏠", id: "nav-admin-dashboard" },
   { href: "/admin/users", label: "Users", icon: "👥", id: "nav-admin-users" },
@@ -69,63 +26,52 @@ const NAV_ITEMS = [
 ];
 
 export default function AdminUsersPage() {
-  const [students, setStudents] = useState<Student[]>(INITIAL_STUDENTS);
+  const [students, setStudents] = useState<Student[]>([]);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "enabled" | "disabled">("all");
 
   useEffect(() => {
     async function loadUsers() {
-      try {
-        const res = await adminApi.getUsers();
-        if (res.success && Array.isArray(res.data)) {
-          const mapped = (res.data as User[])
-            .filter((u) => u.role !== "admin")
-            .map((u) => ({
-              id: u.id,
-              username: u.username,
-              name: u.name,
-              domain: u.domain || "General",
-              branch: u.branch || "Engineering",
-              yearOfPassing: u.yearOfPassing || 2027,
-              isAllowed: Boolean(u.isAllowed),
-              online: false,
-            }));
-          if (mapped.length > 0) {
-            setStudents(mapped);
-          }
-        }
-      } catch {
-        // Fall back to default mock list
+      const res = await adminApi.getUsers();
+      if (res.success && Array.isArray(res.data)) {
+        const mapped = (res.data as User[])
+          .filter((u) => u.role === "student")
+          .map((u) => ({
+            id: u.id,
+            username: u.username,
+            name: u.name,
+            domain: u.domain || "General",
+            branch: u.branch || "Engineering",
+            yearOfPassing: u.yearOfPassing,
+            isAllowed: Boolean(u.isAllowed),
+            online: u.lastSeen ? Date.now() - new Date(u.lastSeen).getTime() < 5 * 60_000 : false,
+          }));
+        setStudents(mapped);
+      } else {
+        setError(res.error || "Could not load users.");
       }
+      setLoading(false);
     }
     loadUsers();
   }, []);
 
   async function handleToggleAccess(studentId: string, currentAllowed: boolean) {
     const nextAllowed = !currentAllowed;
-
-    // Optimistic UI update
-    setStudents((prev) =>
-      prev.map((s) =>
-        s.id === studentId
-          ? {
-              ...s,
-              isAllowed: nextAllowed,
-            }
-          : s
-      )
-    );
-
+    setBusyId(studentId);
+    setError(null);
     const student = students.find((s) => s.id === studentId);
-    const label = nextAllowed ? "ALLOWED" : "REVOKED";
-    setFeedback(`${student?.name}'s account access is now ${label.toLowerCase()}.`);
-
-    try {
-      await adminApi.allowUser(studentId, nextAllowed);
-    } catch {
-      // Backend sync error handled gracefully
+    const response = await adminApi.allowUser(studentId, nextAllowed);
+    if (response.success) {
+      setStudents((prev) => prev.map((s) => s.id === studentId ? { ...s, isAllowed: nextAllowed } : s));
+      setFeedback(`${student?.name}'s account access is now ${nextAllowed ? "enabled" : "disabled"}.`);
+    } else {
+      setError(response.error || "Could not update account access.");
     }
+    setBusyId(null);
   }
 
   const filteredStudents = students.filter((s) => {
@@ -196,9 +142,10 @@ export default function AdminUsersPage() {
             User Account Management
           </h1>
           <p style={{ color: "var(--color-text-secondary)", fontSize: "0.9rem" }}>
-            Accounts are open to everyone. Administrators can disable access when needed.
+            Administrators can manage student accounts and grant access to assigned tests.
           </p>
         </div>
+        {error && <div role="alert" style={{ color: "#f87171", marginBottom: "16px" }}>{error}</div>}
 
         {/* Feedback Alert */}
         {feedback && (
@@ -294,6 +241,7 @@ export default function AdminUsersPage() {
 
         {/* Student Table */}
         <div className="glass-card" style={{ padding: "16px", overflowX: "auto" }}>
+          {loading ? <p style={{ padding: "20px", color: "var(--color-text-secondary)" }}>Loading users…</p> : students.length === 0 ? <p style={{ padding: "20px", color: "var(--color-text-secondary)" }}>No student accounts found.</p> : (
           <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.88rem" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--color-border)", color: "var(--color-text-secondary)" }}>
@@ -346,6 +294,7 @@ export default function AdminUsersPage() {
                   <td style={{ padding: "14px 16px" }}>
                     {student.isAllowed ? (
                       <button
+                        disabled={busyId === student.id}
                         onClick={() => handleToggleAccess(student.id, student.isAllowed)}
                         style={{
                           padding: "6px 14px",
@@ -362,6 +311,7 @@ export default function AdminUsersPage() {
                       </button>
                     ) : (
                       <button
+                        disabled={busyId === student.id}
                         onClick={() => handleToggleAccess(student.id, student.isAllowed)}
                         style={{
                           padding: "6px 14px",
@@ -382,6 +332,7 @@ export default function AdminUsersPage() {
               ))}
             </tbody>
           </table>
+          )}
         </div>
       </main>
     </div>

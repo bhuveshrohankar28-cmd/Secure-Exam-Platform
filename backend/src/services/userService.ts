@@ -1,96 +1,22 @@
 import { db } from "../firebase/firebaseAdmin";
-import { User, ISOTimestamp } from "../types/models";
+import { User } from "../types/models";
 
-// In-memory fallback database for local development and testing
-   const SEED_USERS: [string, User][] = [
-  [
-    "usr_admin",
-    {
-      id: "usr_admin",
-      username: "ADMIN001",
-      name: "Platform Administrator",
-      email: "admin@college.edu",
-      role: "admin",
-      accountStatus: "active",
-      isAllowed: true,
-      lastSeen: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ],
-  [
-    "usr_1",
-    {
-      id: "usr_1",
-      username: "ARJUN2024001",
-      name: "Arjun Sharma",
-      email: "arjun.sharma@college.edu",
-      collegeEnrollmentNo: "CE2024001",
-      branch: "Computer Engineering",
-      domain: "Software",
-      yearOfPassing: 2027,
-      role: "student",
-      accountStatus: "active",
-      isAllowed: true,
-      lastSeen: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ],
-  [
-    "usr_2",
-    {
-      id: "usr_2",
-      username: "PRIYA2024002",
-      name: "Priya Patel",
-      email: "priya.patel@college.edu",
-      collegeEnrollmentNo: "EE2024002",
-      branch: "Electrical Engineering",
-      domain: "Electrical",
-      yearOfPassing: 2027,
-      role: "student",
-      accountStatus: "active",
-      isAllowed: true,
-      lastSeen: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ],
-  [
-    "usr_3",
-    {
-      id: "usr_3",
-      username: "RAHUL2024003",
-      name: "Rahul Mehta",
-      email: "rahul.mehta@college.edu",
-      collegeEnrollmentNo: "ME2024003",
-      branch: "Mechanical Engineering",
-      domain: "Mechanical",
-      yearOfPassing: 2026,
-      role: "student",
-      accountStatus: "active",
-      isAllowed: true,
-      lastSeen: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ],
-];
-   const inMemoryUsers = new Map<string, User>(db ? [] : SEED_USERS);
+// Empty volatile store is used only when Firebase is not configured.
+const inMemoryUsers = new Map<string, User>();
 
-  function toUser(id: string, data: Record<string, unknown>): User {
-    const { rtfId, ...userData } = data;
-    return {
-      ...userData,
-      id,
-      username:
-        typeof data.username === "string"
-          ? data.username
-          : typeof rtfId === "string"
-            ? rtfId
-            : "",
-    } as User;
-  }
+function toUser(id: string, data: Record<string, unknown>): User {
+  const { rtfId, ...userData } = data;
+  return {
+    ...userData,
+    id,
+    username:
+      typeof data.username === "string"
+        ? data.username
+        : typeof rtfId === "string"
+          ? rtfId
+          : "",
+  } as User;
+}
 
 /**
  * Fetch a user by username. Legacy records are read during migration.

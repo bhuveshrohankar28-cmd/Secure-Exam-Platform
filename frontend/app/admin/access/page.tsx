@@ -1,216 +1,138 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Admin — Test Access",
-  description: "Manage test access permissions for students",
+import { FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
+import { adminApi, testAccessApi } from "@/lib/api/endpoints";
+import { Test, TestAccess, User } from "@/types";
+
+const navItems = [
+  ["Dashboard", "/admin/dashboard"], ["Users", "/admin/users"], ["Tests", "/admin/tests"],
+  ["Test Access", "/admin/access"], ["Attempts", "/admin/attempts"], ["Reports", "/admin/reports"],
+];
+const inputStyle: React.CSSProperties = {
+  padding: "10px 12px", border: "1px solid var(--color-border)", borderRadius: "8px",
+  background: "var(--color-bg-primary)", color: "var(--color-text-primary)",
 };
 
-const NAV_ITEMS = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: "🏠", id: "nav-admin-dashboard" },
-  { href: "/admin/users", label: "Users", icon: "👥", id: "nav-admin-users" },
-  { href: "/admin/tests", label: "Tests", icon: "📋", id: "nav-admin-tests" },
-  { href: "/admin/access", label: "Test Access", icon: "🔑", id: "nav-admin-access" },
-  { href: "/admin/attempts", label: "Attempts", icon: "📝", id: "nav-admin-attempts" },
-  { href: "/admin/reports", label: "Reports", icon: "📊", id: "nav-admin-reports" },
-];
-
-const MOCK_ACCESS_RULES = [
-  {
-    id: "acc_1",
-    testTitle: "Mid-Term Software Engineering MCQ",
-    accessType: "DOMAIN",
-    target: "Domain: Software (All Years)",
-    grantedBy: "Admin",
-    status: "active",
-    grantedAt: "2026-09-28",
-  },
-  {
-    id: "acc_2",
-    testTitle: "Data Structures & Algorithms Quiz",
-    accessType: "YEAR",
-    target: "Year 2 (2027 Batch)",
-    grantedBy: "Admin",
-    status: "active",
-    grantedAt: "2026-09-29",
-  },
-  {
-    id: "acc_3",
-    testTitle: "Digital Logic Design Assessment",
-    accessType: "STUDENT",
-    target: "Arjun Sharma (CE2024001)",
-    grantedBy: "Admin",
-    status: "revoked",
-    grantedAt: "2026-09-25",
-  },
-];
-
 export default function AdminAccessPage() {
+  const [tests, setTests] = useState<Test[]>([]);
+  const [students, setStudents] = useState<User[]>([]);
+  const [records, setRecords] = useState<TestAccess[]>([]);
+  const [testId, setTestId] = useState("");
+  const [userId, setUserId] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  async function loadData() {
+    const [testResponse, userResponse, accessResponse] = await Promise.all([
+      adminApi.getTests(), adminApi.getUsers(), testAccessApi.getAll(),
+    ]);
+    const errors = [testResponse, userResponse, accessResponse].filter((response) => !response.success);
+    if (errors.length > 0) {
+      setError(errors.map((response) => response.error).filter(Boolean).join(" "));
+    } else {
+      const loadedTests = Array.isArray(testResponse.data) ? testResponse.data : [];
+      const loadedUsers = Array.isArray(userResponse.data) ? userResponse.data.filter((user) => user.role === "student") : [];
+      setTests(loadedTests);
+      setStudents(loadedUsers);
+      setRecords(Array.isArray(accessResponse.data) ? accessResponse.data : []);
+      setTestId((current) => current || loadedTests[0]?.id || "");
+      setUserId((current) => current || loadedUsers[0]?.id || "");
+      setError(null);
+    }
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    let active = true;
+    Promise.all([adminApi.getTests(), adminApi.getUsers(), testAccessApi.getAll()]).then(
+      ([testResponse, userResponse, accessResponse]) => {
+        if (!active) return;
+        const errors = [testResponse, userResponse, accessResponse].filter((response) => !response.success);
+        if (errors.length > 0) {
+          setError(errors.map((response) => response.error).filter(Boolean).join(" "));
+        } else {
+          const loadedTests = Array.isArray(testResponse.data) ? testResponse.data : [];
+          const loadedUsers = Array.isArray(userResponse.data) ? userResponse.data.filter((user) => user.role === "student") : [];
+          setTests(loadedTests);
+          setStudents(loadedUsers);
+          setRecords(Array.isArray(accessResponse.data) ? accessResponse.data : []);
+          setTestId((current) => current || loadedTests[0]?.id || "");
+          setUserId((current) => current || loadedUsers[0]?.id || "");
+        }
+        setLoading(false);
+      }
+    );
+    return () => { active = false; };
+  }, []);
+
+  async function grant(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!testId || !userId) return;
+    setBusy(true);
+    setError(null);
+    const response = await testAccessApi.grant(testId, userId);
+    if (response.success) {
+      setNotice("Test access granted.");
+      await loadData();
+    } else setError(response.error || "Could not grant test access.");
+    setBusy(false);
+  }
+
+  async function revoke(record: TestAccess) {
+    setBusy(true);
+    setError(null);
+    const response = await testAccessApi.revoke(record.id);
+    if (response.success) {
+      setNotice("Test access revoked.");
+      await loadData();
+    } else setError(response.error || "Could not revoke test access.");
+    setBusy(false);
+  }
+
+  const testName = (id: string) => tests.find((test) => test.id === id)?.title || id;
+  const studentName = (id: string) => {
+    const user = students.find((student) => student.id === id);
+    return user ? `${user.name} (${user.username})` : id;
+  };
+
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--color-bg-primary)" }}>
-      {/* Sidebar */}
-      <aside
-        style={{
-          width: "240px",
-          background: "var(--color-bg-secondary)",
-          borderRight: "1px solid var(--color-border)",
-          padding: "24px 0",
-          flexShrink: 0,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div style={{ padding: "0 20px 24px", borderBottom: "1px solid var(--color-border)" }}>
-          <div style={{ fontSize: "1.5rem", marginBottom: "4px" }}>🛡️</div>
-          <div style={{ fontWeight: 800, fontSize: "1rem" }}>Admin Panel</div>
-          <div style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)" }}>
-            Exam Platform
-          </div>
-        </div>
-
-        <nav style={{ padding: "12px 12px", flex: 1 }}>
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              id={item.id}
-              href={item.href}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                padding: "10px 12px",
-                borderRadius: "10px",
-                textDecoration: "none",
-                color: item.href === "/admin/access" ? "var(--color-text-primary)" : "var(--color-text-secondary)",
-                background: item.href === "/admin/access" ? "rgba(79,142,247,0.1)" : "transparent",
-                fontSize: "0.9rem",
-                fontWeight: item.href === "/admin/access" ? 600 : 400,
-                marginBottom: "4px",
-                transition: "all 0.2s",
-              }}
-            >
-              <span>{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <div style={{ padding: "16px 20px", borderTop: "1px solid var(--color-border)", fontSize: "0.8rem", color: "var(--color-text-secondary)" }}>
-          Admin User
-        </div>
+      <aside style={{ width: "220px", background: "var(--color-bg-secondary)", borderRight: "1px solid var(--color-border)", padding: "24px 12px" }}>
+        <strong style={{ display: "block", padding: "0 8px 20px" }}>Admin Panel</strong>
+        <nav style={{ display: "grid", gap: "4px" }}>{navItems.map(([label, href]) => <Link key={href} href={href} style={{ padding: "10px", borderRadius: "8px", textDecoration: "none", color: href === "/admin/access" ? "var(--color-text-primary)" : "var(--color-text-secondary)", background: href === "/admin/access" ? "rgba(79,142,247,.1)" : "transparent" }}>{label}</Link>)}</nav>
       </aside>
-
-      {/* Main Content */}
-      <main style={{ flex: 1, padding: "32px", overflow: "auto" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px" }}>
-          <div>
-            <h1 style={{ fontSize: "1.6rem", fontWeight: 800, marginBottom: "6px" }}>
-              Test Access Management
-            </h1>
-            <p style={{ color: "var(--color-text-secondary)", fontSize: "0.9rem" }}>
-              Grant or revoke examination access by domain, batch year, or individual student.
-            </p>
+      <main style={{ flex: 1, padding: "30px", overflow: "auto" }}>
+        <h1 style={{ fontSize: "1.6rem", fontWeight: 800 }}>Test Access Management</h1>
+        <p style={{ color: "var(--color-text-secondary)", margin: "6px 0 20px" }}>Grant or revoke access for an individual student.</p>
+        {error && <div role="alert" style={{ padding: "12px", marginBottom: "14px", borderRadius: "8px", color: "#f87171", background: "rgba(239,68,68,.12)" }}>{error}</div>}
+        {notice && <div role="status" style={{ padding: "12px", marginBottom: "14px", borderRadius: "8px", color: "#34d399", background: "rgba(16,185,129,.12)" }}>{notice}</div>}
+        <section className="glass-card" style={{ padding: "22px", marginBottom: "22px" }}>
+          <h2 style={{ fontSize: "1.05rem", marginBottom: "14px" }}>Grant access</h2>
+          <form onSubmit={grant} style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+            <select aria-label="Select test" required value={testId} onChange={(event) => setTestId(event.target.value)} style={{ ...inputStyle, flex: "1 1 220px" }}>
+              <option value="">Select test…</option>{tests.map((test) => <option key={test.id} value={test.id}>{test.title}</option>)}
+            </select>
+            <select aria-label="Select student" required value={userId} onChange={(event) => setUserId(event.target.value)} style={{ ...inputStyle, flex: "1 1 220px" }}>
+              <option value="">Select student…</option>{students.map((student) => <option key={student.id} value={student.id}>{student.name} ({student.username})</option>)}
+            </select>
+            <button disabled={busy || !testId || !userId} type="submit" style={{ padding: "10px 18px", border: 0, borderRadius: "8px", color: "#fff", background: "var(--gradient-primary)", fontWeight: 700, cursor: busy ? "wait" : "pointer" }}>Grant access</button>
+          </form>
+        </section>
+        <h2 style={{ fontSize: "1.05rem", marginBottom: "12px" }}>Access records</h2>
+        {loading ? <p style={{ color: "var(--color-text-secondary)" }}>Loading access records…</p> : records.length === 0 ? <div className="glass-card" style={{ padding: "24px", color: "var(--color-text-secondary)" }}>No test access records yet.</div> : (
+          <div className="glass-card" style={{ padding: "12px", overflowX: "auto" }}>
+            <table style={{ width: "100%", minWidth: "680px", borderCollapse: "collapse", textAlign: "left" }}>
+              <thead><tr style={{ color: "var(--color-text-secondary)", borderBottom: "1px solid var(--color-border)" }}>{["Test", "Student", "Status", "Granted"].map((heading) => <th key={heading} style={{ padding: "12px" }}>{heading}</th>)}<th style={{ padding: "12px" }}>Action</th></tr></thead>
+              <tbody>{records.map((record) => <tr key={record.id} style={{ borderBottom: "1px solid rgba(255,255,255,.05)" }}>
+                <td style={{ padding: "12px" }}>{testName(record.testId)}</td><td style={{ padding: "12px" }}>{studentName(record.userId)}</td><td style={{ padding: "12px" }}>{record.status}</td><td style={{ padding: "12px" }}>{new Date(record.grantedAt).toLocaleString()}</td>
+                <td style={{ padding: "12px" }}>{record.status === "allowed" ? <button disabled={busy} onClick={() => void revoke(record)} style={{ padding: "7px 10px", border: "1px solid rgba(239,68,68,.4)", borderRadius: "7px", color: "#f87171", background: "transparent", cursor: "pointer" }}>Revoke</button> : "—"}</td>
+              </tr>)}</tbody>
+            </table>
           </div>
-          <button
-            id="grant-access-modal-btn"
-            style={{
-              padding: "10px 20px",
-              background: "var(--color-accent)",
-              color: "#fff",
-              border: "none",
-              borderRadius: "10px",
-              fontWeight: 600,
-              fontSize: "0.85rem",
-              cursor: "pointer",
-            }}
-          >
-            + Grant New Access
-          </button>
-        </div>
-
-        <div
-          style={{
-            background: "rgba(245, 158, 11, 0.08)",
-            border: "1px solid rgba(245, 158, 11, 0.2)",
-            borderRadius: "12px",
-            padding: "14px 20px",
-            marginBottom: "28px",
-            fontSize: "0.85rem",
-            color: "#f59e0b",
-          }}
-        >
-          🚧 <strong>Foundation Phase:</strong> Dynamic access validation rules and live Firestore binding will be implemented in Phase 6.
-        </div>
-
-        {/* Access List */}
-        <div className="glass-card" style={{ padding: "20px" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.88rem" }}>
-            <thead>
-              <tr style={{ borderBottom: "1px solid var(--color-border)", color: "var(--color-text-secondary)" }}>
-                <th style={{ padding: "12px 16px" }}>Examination</th>
-                <th style={{ padding: "12px 16px" }}>Type</th>
-                <th style={{ padding: "12px 16px" }}>Target</th>
-                <th style={{ padding: "12px 16px" }}>Status</th>
-                <th style={{ padding: "12px 16px" }}>Granted At</th>
-                <th style={{ padding: "12px 16px" }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MOCK_ACCESS_RULES.map((rule) => (
-                <tr key={rule.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                  <td style={{ padding: "14px 16px", fontWeight: 600 }}>{rule.testTitle}</td>
-                  <td style={{ padding: "14px 16px" }}>
-                    <span
-                      style={{
-                        padding: "4px 8px",
-                        borderRadius: "6px",
-                        fontSize: "0.75rem",
-                        background: "rgba(79, 142, 247, 0.15)",
-                        color: "#4f8ef7",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {rule.accessType}
-                    </span>
-                  </td>
-                  <td style={{ padding: "14px 16px", color: "var(--color-text-secondary)" }}>{rule.target}</td>
-                  <td style={{ padding: "14px 16px" }}>
-                    <span
-                      style={{
-                        padding: "4px 8px",
-                        borderRadius: "6px",
-                        fontSize: "0.75rem",
-                        background: rule.status === "active" ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)",
-                        color: rule.status === "active" ? "#10b981" : "#ef4444",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {rule.status.toUpperCase()}
-                    </span>
-                  </td>
-                  <td style={{ padding: "14px 16px", color: "var(--color-text-secondary)", fontSize: "0.82rem" }}>
-                    {rule.grantedAt}
-                  </td>
-                  <td style={{ padding: "14px 16px" }}>
-                    <button
-                      style={{
-                        padding: "6px 12px",
-                        background: "transparent",
-                        border: "1px solid var(--color-border)",
-                        borderRadius: "6px",
-                        color: "var(--color-text-secondary)",
-                        fontSize: "0.78rem",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {rule.status === "active" ? "Revoke" : "Restore"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        )}
       </main>
     </div>
   );

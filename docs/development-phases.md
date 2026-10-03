@@ -75,11 +75,11 @@ Each phase builds on the previous one. Do not skip phases.
 **Goal:** Admin can create tests and add MCQ questions.
 
 **Deliverables:**
-- [ ] Test creation form (title, description, duration, marks)
-- [ ] Question editor with 4 options and correct answer selection
-- [ ] Test status management (draft → scheduled → active)
-- [ ] Backend CRUD for tests and questions
-- [ ] `correctOptionIndex` is never returned to students
+- [x] Test creation form (title, description, duration)
+- [x] Validated JSON question import with four options and correct answer selection
+- [x] Test status management (draft → scheduled → active)
+- [x] Backend CRUD for tests and questions
+- [x] `correctOptionIndex` is never returned to students during an exam
 
 **Test:** Admin creates a test with 5 questions and publishes it.
 
@@ -90,11 +90,12 @@ Each phase builds on the previous one. Do not skip phases.
 **Goal:** Admin can grant/revoke student access to specific tests.
 
 **Deliverables:**
-- [ ] Admin selects students and grants test access
-- [ ] `testAccess` records created in Firestore
-- [ ] Students can only see tests they have been granted access to
-- [ ] Admin can revoke access
-- [ ] `GET /api/tests` returns only accessible tests for students
+- [x] Admin selects an individual student and grants test access
+- [x] `testAccess` records created in Firestore (or in-memory for local development)
+- [x] Students can only see and start tests they have been granted access to
+- [x] Admin can revoke access
+- [x] `GET /api/tests` returns only accessible tests for students
+- [ ] Batch/domain/year-based grants
 
 **Test:** Admin grants Student A access to Test 1. Student A sees it; Student B does not.
 
@@ -105,14 +106,14 @@ Each phase builds on the previous one. Do not skip phases.
 **Goal:** Students can take exams end-to-end.
 
 **Deliverables:**
-- [ ] Test instructions page with countdown before start
-- [ ] Full exam interface (all questions, navigation)
-- [ ] Mobile-first responsive layout (360px–420px viewports, touch targets >= 48px, slide-over palette drawer)
-- [ ] Countdown timer with visual warning at 5 minutes
-- [ ] Answer selection and navigation
-- [ ] Answer autosave every 30 seconds
-- [ ] Submit button with confirmation dialog
-- [ ] Attempt record in Firestore
+- [x] Test instructions page and start/resume actions
+- [x] Exam interface with question navigation
+- [x] Responsive exam layout
+- [x] Countdown timer with visual warning under one minute
+- [x] Answer selection and navigation
+- [x] Changed answers are autosaved to the backend
+- [x] Submit action and automatic submission at expiry
+- [x] Attempt record in Firestore (or in-memory for local development)
 
 **Test:** Student starts a test on mobile and desktop, answers all questions, and submits. See [mobile-testing-guide.md](./mobile-testing-guide.md).
 
@@ -123,11 +124,11 @@ Each phase builds on the previous one. Do not skip phases.
 **Goal:** Prevent data loss if the student closes the tab or loses connection.
 
 **Deliverables:**
-- [ ] Autosave answers to backend every 30 seconds
-- [ ] On page reload, recover answers from backend
-- [ ] Auto-submit when timer expires
-- [ ] Prevent starting the same test twice
-- [ ] Handle network interruptions gracefully
+- [x] Autosave changed answers to backend
+- [x] On page reload, recover answers from backend
+- [x] Auto-submit when timer expires
+- [x] Prevent starting the same test twice
+- [x] Surface save/connection errors and retry on subsequent changes
 
 **Test:** Student closes the tab mid-exam and reopens — answers are restored.
 
@@ -138,10 +139,10 @@ Each phase builds on the previous one. Do not skip phases.
 **Goal:** Students see their scores after submission.
 
 **Deliverables:**
-- [ ] Automatic grading after submission
-- [ ] Score calculation from `answers` vs `correctOptionIndex`
-- [ ] Result page showing score and pass/fail
-- [ ] Admin can view all results in the Attempts dashboard
+- [x] Automatic grading after submission
+- [x] Score calculation from `answers` vs `correctOptionIndex`
+- [x] Student result and score pages
+- [x] Admin can view results in the Attempts dashboard and export attempt data
 
 **Test:** After submission, student immediately sees their score.
 

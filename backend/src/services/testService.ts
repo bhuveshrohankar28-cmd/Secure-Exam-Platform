@@ -1,3 +1,4 @@
+import { randomInt } from "crypto";
 import { db } from "../firebase/firebaseAdmin";
 import { Question, Test, TestStatus } from "../types/models";
 
@@ -24,6 +25,80 @@ function chunk<T>(items: T[], size: number): T[][] {
 }
 
 // ------------------------------------------------------------------
+// Test codes
+// ------------------------------------------------------------------
+
+// No I, O, 0 or 1, so a code read aloud or off a board can't be misread.
+const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const CODE_LENGTH = 6;
+
+function randomCode(): string {
+  let code = "";
+  for (let i = 0; i < CODE_LENGTH; i++) {
+    code += CODE_ALPHABET[randomInt(CODE_ALPHABET.length)];
+  }
+  return code;
+}
+
+/** Uppercases and strips spaces/dashes, so "k7p-4qx" matches "K7P4QX". */
+export function normalizeCode(input: string): string {
+  return input.toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+async function findTestByCode(code: string): Promise<Test | null> {
+  if (db) {
+    const snapshot = await db
+      .collection("tests")
+      .where("testCode", "==", code)
+      .limit(1)
+      .get();
+    if (snapshot.empty) return null;
+    const doc = snapshot.docs[0];
+    return { id: doc.id, ...(doc.data() as Omit<Test, "id">) };
+  }
+  for (const test of inMemoryTests.values()) {
+    if ((test as Test & { testCode?: string }).testCode === code) return test;
+  }
+  return null;
+}
+
+async function generateUniqueCode(): Promise<string> {
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const code = randomCode();
+    if (!(await findTestByCode(code))) return code;
+  }
+  throw new Error("Could not generate a unique test code.");
+}
+
+/**
+ * Lobby screens poll this every few seconds, so lookups are cached briefly.
+ * The cache is cleared on every test write. It is per server process, which
+ * is fine for a single backend instance.
+ */
+const CODE_CACHE_TTL_MS = 3000;
+const CODE_CACHE_MAX = 1000;
+const codeCache = new Map<string, { test: Test | null; at: number }>();
+
+export async function getTestByCode(input: string): Promise<Test | null> {
+  const code = normalizeCode(input);
+  if (!code) return null;
+
+  const hit = codeCache.get(code);
+  if (hit && Date.now() - hit.at < CODE_CACHE_TTL_MS) return hit.test;
+
+  const test = await findTestByCode(code);
+  if (codeCache.size >= CODE_CACHE_MAX) codeCache.clear();
+  codeCache.set(code, { test, at: Date.now() });
+  return test;
+}
+
+/** Gives the test a new code. Old code stops working immediately. */
+export async function regenerateTestCode(id: string): Promise<Test | null> {
+  const code = await generateUniqueCode();
+  return updateTest(id, { testCode: code });
+}
+
+// ------------------------------------------------------------------
 // Tests
 // ------------------------------------------------------------------
 
@@ -33,6 +108,7 @@ async function saveTest(test: Test): Promise<void> {
   } else {
     inMemoryTests.set(test.id, test);
   }
+  codeCache.clear();
 }
 
 export async function createTest(
@@ -42,6 +118,7 @@ export async function createTest(
   const now = new Date().toISOString();
   const test: Test = {
     id: newId("test"),
+    testCode: await generateUniqueCode(),
     title: data.title,
     description: data.description,
     duration: data.duration,
@@ -118,6 +195,7 @@ export async function deleteTest(id: string): Promise<boolean> {
   } else {
     inMemoryTests.delete(id);
   }
+  codeCache.clear();
   return true;
 }
 

@@ -3,6 +3,13 @@ import { AuthenticatedRequest } from "../middleware/authMiddleware";
 import { Test, TestStatus } from "../types/models";
 import * as testService from "../services/testService";
 import {
+  attemptIdFor,
+  getAttempt,
+  isPastGrace,
+  toAttemptView,
+} from "../services/attemptService";
+import { getStudentAccessibleTests, hasTestAccess } from "../services/testAccessService";
+import {
   MAX_QUESTIONS_PER_TEST,
   createTestSchema,
   formatZodError,
@@ -54,10 +61,9 @@ function paramId(value: string | string[] | undefined): string {
   return Array.isArray(value) ? value[0] : value ?? "";
 }
 
-/** What a student is allowed to see about a test. No answers, no questions. */
-function toStudentView(test: Test) {
+/** What a student may see about a test. No test ID, no questions, no answers. */
+function toLobbyTest(test: Test) {
   return {
-    id: test.id,
     title: test.title,
     description: test.description,
     duration: test.duration,
@@ -68,54 +74,102 @@ function toStudentView(test: Test) {
 }
 
 // ------------------------------------------------------------------
-// GET /api/tests
-// Admin: all tests (optional ?status=). Student: active tests only.
+// GET /api/tests (admin: all tests, student: assigned tests only)
 // ------------------------------------------------------------------
 export const getTests = safe(async (req, res) => {
-  if (isAdmin(req)) {
-    let status: TestStatus | undefined;
-    if (typeof req.query.status === "string") {
-      const parsed = testStatusSchema.safeParse(req.query.status);
-      if (!parsed.success) {
-        res.status(400).json({ success: false, error: "Invalid status filter." });
-        return;
-      }
-      status = parsed.data;
+  let status: TestStatus | undefined;
+  if (typeof req.query.status === "string") {
+    const parsed = testStatusSchema.safeParse(req.query.status);
+    if (!parsed.success) {
+      res.status(400).json({ success: false, error: "Invalid status filter." });
+      return;
     }
-    const tests = await testService.listTests(status);
-    res.status(200).json({ success: true, data: tests });
-    return;
+    status = parsed.data;
   }
 
-  const tests = await testService.listTests("active");
-  res.status(200).json({ success: true, data: tests.map(toStudentView) });
+  const tests = isAdmin(req)
+    ? await testService.listTests(status)
+    : (await getStudentAccessibleTests(req.user!.id)).filter(
+      (test): test is Test => test !== null && (!status || test.status === status)
+    );
+  res.status(200).json({ success: true, data: tests });
 });
 
 // ------------------------------------------------------------------
-// GET /api/tests/:id
-// Admin: test + all questions WITH answers.
-// Student: summary only, and only if the test is active.
-// Questions are never sent to students here (only after an attempt starts).
+// GET /api/tests/:id  (admin)
+// Test + all questions WITH answers.
 // ------------------------------------------------------------------
 export const getTestById = safe(async (req, res) => {
-  const test = await testService.getTestById(paramId(req.params.id));
+  if (!isAdmin(req)) {
+    res.status(403).json({ success: false, error: "Admins only." });
+    return;
+  }
 
-  if (!test || (!isAdmin(req) && test.status !== "active")) {
+  const test = await testService.getTestById(paramId(req.params.id));
+  if (!test) {
     res.status(404).json({ success: false, error: "Test not found." });
     return;
   }
 
-  if (isAdmin(req)) {
-    const questions = await testService.getQuestionsByTestId(test.id);
-    res.status(200).json({ success: true, data: { ...test, questions } });
+  const questions = await testService.getQuestionsByTestId(test.id);
+  res.status(200).json({ success: true, data: { ...test, questions } });
+});
+
+// ------------------------------------------------------------------
+// GET /api/tests/code/:code
+// The test LOBBY. A student enters the code and sees the test details and
+// what they can do next. The page polls this every few seconds, so it
+// switches to "ready" the moment the admin activates the test.
+//
+// state:
+//   waiting      test exists but the admin has not started it yet
+//   ready        test is active and the student has not started
+//   in_progress  the student has a running attempt (resume)
+//   finished     the student has already attempted this test
+//   ended        the test is closed and the student never started
+// ------------------------------------------------------------------
+export const getLobbyByCode = safe(async (req, res) => {
+  const test = await testService.getTestByCode(paramId(req.params.code));
+
+  // Drafts and archived tests look exactly like a wrong code.
+  if (!test || test.status === "draft" || test.status === "archived") {
+    res.status(404).json({ success: false, error: "Invalid test code." });
+    return;
+  }
+  if (!isAdmin(req) && !(await hasTestAccess(test.id, req.user!.id))) {
+    res.status(403).json({ success: false, error: "You do not have access to this test." });
     return;
   }
 
-  res.status(200).json({ success: true, data: toStudentView(test) });
+  const attempt = await getAttempt(attemptIdFor(test.id, req.user!.id));
+
+  let state: "waiting" | "ready" | "in_progress" | "finished" | "ended";
+  if (attempt) {
+    state =
+      attempt.status === "in_progress" && !isPastGrace(attempt)
+        ? "in_progress"
+        : "finished";
+  } else if (test.status === "active") {
+    state = "ready";
+  } else if (test.status === "scheduled") {
+    state = "waiting";
+  } else {
+    state = "ended";
+  }
+
+  res.status(200).json({
+    success: true,
+    data: {
+      test: toLobbyTest(test),
+      state,
+      attempt: attempt ? toAttemptView(attempt) : null,
+    },
+  });
 });
 
 // ------------------------------------------------------------------
 // POST /api/tests  (admin)
+// The new test gets its code immediately.
 // ------------------------------------------------------------------
 export const createTest = safe(async (req, res) => {
   const parsed = createTestSchema.safeParse(req.body);
@@ -187,6 +241,20 @@ export const updateTest = safe(async (req, res) => {
 });
 
 // ------------------------------------------------------------------
+// POST /api/tests/:id/regenerate-code  (admin)
+// Use if a code leaks. The old code stops working immediately; students who
+// already started keep their running attempt.
+// ------------------------------------------------------------------
+export const regenerateCode = safe(async (req, res) => {
+  const test = await testService.regenerateTestCode(paramId(req.params.id));
+  if (!test) {
+    res.status(404).json({ success: false, error: "Test not found." });
+    return;
+  }
+  res.status(200).json({ success: true, data: { testCode: test.testCode } });
+});
+
+// ------------------------------------------------------------------
 // DELETE /api/tests/:id  (admin)
 // ------------------------------------------------------------------
 export const deleteTest = safe(async (req, res) => {
@@ -217,6 +285,7 @@ export const deleteTest = safe(async (req, res) => {
 //
 // All-or-nothing: if any question is invalid, nothing is imported and the
 // response lists every problem with its question number.
+// The response includes the test code students will use.
 // ------------------------------------------------------------------
 export const importQuestions = safe(async (req, res) => {
   const id = paramId(req.params.id);
@@ -283,6 +352,8 @@ export const importQuestions = safe(async (req, res) => {
   res.status(201).json({
     success: true,
     data: {
+      testId: id,
+      testCode: result.test.testCode,
       mode,
       added: result.added,
       replaced: result.replaced,

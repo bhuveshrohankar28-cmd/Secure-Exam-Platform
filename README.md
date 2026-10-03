@@ -8,8 +8,7 @@
 
 The **Secure Online MCQ Examination Platform** is engineered to enable institutions to conduct online examinations safely, reliably, and efficiently. Students can log in from their mobile devices or desktops, receive test access granted by administrators, take timed MCQ examinations, and view their performance records. Administrators retain full control over question banks, examination schedules, batch/domain permissions, and live test monitoring.
 
-> **Current Status:** **Phase 1 Complete (Foundation & Architecture Setup)**.  
-> The core architectural skeleton, TypeScript data contracts, Firebase Admin SDK integration layer, Express REST API, Next.js frontend pages, and technical documentation are fully established.
+> **Current Status:** Core exam workflow is implemented and connected across the Next.js frontend and Express backend. Administrators can manage tests, questions, student accounts, and per-student test access; students can take timed exams and view server-graded results. Browser violation tracking, batch access grants, live monitoring, and production hardening remain future work.
 
 ---
 
@@ -109,15 +108,16 @@ secure-exam-platform/
     │   │   └── page.tsx            # Student registration page
     │   ├── student/
     │   │   ├── dashboard/page.tsx  # Mobile-first student exam dashboard
-    │   │   ├── tests/[id]/page.tsx # Mobile test-taking placeholder
-    │   │   └── results/page.tsx    # Student exam results placeholder
+    │   │   ├── tests/[id]/page.tsx # Student test lobby
+    │   │   ├── exam/[id]/page.tsx  # Student exam session
+    │   │   └── results/page.tsx    # Student exam results
     │   └── admin/
     │       ├── dashboard/page.tsx  # Admin metric cards & quick actions
     │       ├── users/page.tsx      # Student directory & access management
     │       ├── access/page.tsx     # Domain & batch test access permissions
-    │       ├── tests/page.tsx      # Test builder placeholder
+    │       ├── tests/page.tsx      # Test builder and question import
     │       ├── attempts/page.tsx   # Live & past examination submissions
-    │       └── reports/page.tsx    # Exam performance reports placeholder
+    │       └── reports/page.tsx    # Exam performance reports
     ├── components/                 # Reusable UI components
     ├── hooks/                      # Custom React hooks (auth, countdown, presence)
     ├── lib/
@@ -205,7 +205,7 @@ FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxx@your-firebase-project-id.iam.gservic
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC...\n-----END PRIVATE KEY-----\n"
 ```
 
-> **Note on Firebase Credentials:** The backend safely starts even if Firebase credentials are not yet configured; mock mode logs will display until live credentials are provided.
+> **Note on Firebase Credentials:** If Firebase credentials are not configured, the backend uses an empty in-memory development store. No sample or seeded user accounts are created, and in-memory data is lost when the backend stops.
 
 #### Frontend Configuration (Zero Config — No `.env` Required!)
 The frontend **does not need any `.env` file**.
@@ -302,19 +302,19 @@ The project adheres to structured iterative phases:
 
 - [x] **Phase 1: Project Foundation** ✅ COMPLETE — Directory architecture, TypeScript types, Express skeleton, Next.js UI scaffolding, and documentation.
 - [x] **Phase 2: Open Account Access** ✅ COMPLETE — Username-based account creation and login, signed JWT sessions, and administrator account access controls.
-- [ ] **Phase 3: User Management & Heartbeats** — Student profile completion, enrollment verification, and presence heartbeats (`lastSeen`).
-- [ ] **Phase 4: Admin Dashboard** — Metrics overview, student directory table, and status filtering.
-- [ ] **Phase 5: Test Creation & Question Bank** — MCQ authoring, question randomization, and duration limits.
-- [ ] **Phase 6: Test Access Management** — Admin permission grants (by domain, year, or individual student).
-- [ ] **Phase 7: Student Exam Taking Flow** — Mobile test screen, question navigation, and option selection.
-- [ ] **Phase 8: Timer, Autosave & Resumption** — Local storage backup, periodic response syncing, and auto-submit upon timer expiry.
-- [ ] **Phase 9: Grading & Results** — Server-side automated scoring and student report cards.
+- [ ] **Phase 3: User Management & Heartbeats** — Account controls and presence heartbeat are connected; profile completion and enrollment verification remain.
+- [x] **Phase 4: Admin Dashboard** — Live counts, student directory, and account status filtering.
+- [x] **Phase 5: Test Creation & Question Bank** — Test CRUD, validated question import, test lifecycle, and shuffled student question order.
+- [ ] **Phase 6: Test Access Management** — Individual grant/revoke and access enforcement are connected; batch/domain/year grants remain.
+- [x] **Phase 7: Student Exam Taking Flow** — Instructions, question navigation, answer selection, and submission.
+- [x] **Phase 8: Timer, Autosave & Resumption** — Server-timed countdown, change-based answer syncing, resume after refresh, and automatic submission.
+- [x] **Phase 9: Grading & Results** — Server-side scoring, student results, admin attempts, and CSV export.
 - [ ] **Phase 10: Anti-Cheating & Integrity Monitoring** — Fullscreen request, visibility change detection, paste blocking, and violation logs.
 - [ ] **Phase 11: Live Admin Monitoring** — Real-time student progress tracking and force-submission triggers.
 - [ ] **Phase 12: Production Hardening** — Security audit, rate limiting, and performance testing.
 
 ### Recommended Next Step
-Proceed to **Phase 3 (User Management & Heartbeats)** or **Phase 5 (Test Creation & Question Bank)**: create the question bank data structure and test authoring interface for administrators.
+Implement batch access grants, browser-integrity event reporting, and live attempt monitoring before production hardening.
 
 ---
 

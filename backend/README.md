@@ -90,18 +90,19 @@ server.ts           — Server entry point (starts listening)
 | Method | Path                    | Auth | Role         | Status      |
 |--------|-------------------------|------|--------------|-------------|
 | GET    | /api/health             | No   | —            | ✅ Working   |
-| POST   | /api/auth/register      | No   | —            | 🚧 Phase 2  |
-| POST   | /api/auth/login         | No   | —            | 🚧 Phase 2  |
-| POST   | /api/auth/logout        | Yes  | any          | 🚧 Phase 2  |
+| POST   | /api/auth/login         | No   | —            | ✅ Working   |
+| POST   | /api/auth/logout        | Yes  | any          | ✅ Working   |
 | GET    | /api/auth/me            | Yes  | any          | ✅ Working   |
-| GET    | /api/users/me           | Yes  | any          | 🚧 Phase 3  |
+| GET    | /api/users/me           | Yes  | any          | ✅ Working   |
 | POST   | /api/users/heartbeat    | Yes  | any          | ✅ Working   |
-| GET    | /api/tests              | Yes  | any          | 🚧 Phase 5  |
-| POST   | /api/tests              | Yes  | admin        | 🚧 Phase 5  |
-| GET    | /api/test-access        | Yes  | any          | 🚧 Phase 6  |
-| POST   | /api/test-access        | Yes  | admin        | 🚧 Phase 6  |
-| POST   | /api/attempts           | Yes  | student      | 🚧 Phase 7  |
-| GET    | /api/admin/users        | Yes  | admin        | 🚧 Phase 4  |
+| GET    | /api/tests              | Yes  | admin/student| ✅ Working   |
+| POST   | /api/tests              | Yes  | admin        | ✅ Working   |
+| GET    | /api/test-access        | Yes  | any          | ✅ Working   |
+| POST   | /api/test-access        | Yes  | admin        | ✅ Working   |
+| POST   | /api/attempts           | Yes  | student      | ✅ Working   |
+| GET    | /api/admin/users        | Yes  | admin        | ✅ Working   |
+
+Students only receive assigned tests and must have an active access grant to view a test lobby or start it. Without Firebase configuration, data is stored in memory for local development and is lost when the server restarts.
 
 ## Firebase Setup
 

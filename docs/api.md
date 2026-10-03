@@ -140,31 +140,37 @@ Updates the user's `lastSeen` timestamp. Called periodically from the student da
 
 #### `GET /api/tests`
 
-Returns tests visible to the authenticated user.
+Admins receive all tests. Students receive only tests with an active access grant.
 
 - **Auth required:** Yes
-- **Status:** 🚧 Phase 5
+- **Status:** Working
 
 #### `GET /api/tests/:id`
 
-Returns a single test.
+Returns one test with questions and answer keys; admins only.
 
-- **Auth required:** Yes
-- **Status:** 🚧 Phase 5
+- **Auth required:** Yes — admin/superadmin
+- **Status:** Working
+
+#### `GET /api/tests/code/:code`
+
+Returns the student-safe test lobby state for an assigned test.
+
+- **Auth required:** Yes — enabled student
+- **Status:** Working
 
 #### `POST /api/tests`
 
 Creates a new test.
 
 - **Auth required:** Yes — admin/superadmin only
-- **Status:** 🚧 Phase 5
+- **Status:** Working
 - **Request body:**
 ```json
 {
   "title": "string",
   "description": "string",
-  "duration": 60,
-  "totalMarks": 100
+  "duration": 60
 }
 ```
 
@@ -173,14 +179,21 @@ Creates a new test.
 Updates a test.
 
 - **Auth required:** Yes — admin/superadmin only
-- **Status:** 🚧 Phase 5
+- **Status:** Working
 
 #### `DELETE /api/tests/:id`
 
 Deletes a test.
 
 - **Auth required:** Yes — admin/superadmin only
-- **Status:** 🚧 Phase 5
+- **Status:** Working
+
+#### `POST /api/tests/:id/questions/import`
+
+Imports validated MCQ question data as `{ "mode": "append" | "replace", "questions": [...] }`. Questions must contain a prompt, four distinct options, `correctOptionIndex` (0–3), and optional `marks` (default 1).
+
+- **Auth required:** Yes — admin/superadmin
+- **Status:** Working
 
 ---
 
@@ -191,14 +204,14 @@ Deletes a test.
 Returns test access records for the authenticated user.
 
 - **Auth required:** Yes
-- **Status:** 🚧 Phase 6
+- **Status:** Working
 
 #### `POST /api/test-access`
 
 Admin grants a student access to a test.
 
 - **Auth required:** Yes — admin/superadmin only
-- **Status:** 🚧 Phase 6
+- **Status:** Working
 - **Request body:**
 ```json
 {
@@ -212,7 +225,7 @@ Admin grants a student access to a test.
 Admin revokes a student's test access.
 
 - **Auth required:** Yes — admin/superadmin only
-- **Status:** 🚧 Phase 6
+- **Status:** Working
 
 ---
 
@@ -223,11 +236,11 @@ Admin revokes a student's test access.
 Student starts a test attempt.
 
 - **Auth required:** Yes
-- **Status:** 🚧 Phase 7
+- **Status:** Working
 - **Request body:**
 ```json
 {
-  "testId": "string"
+  "code": "string"
 }
 ```
 
@@ -236,21 +249,21 @@ Student starts a test attempt.
 Returns attempt details.
 
 - **Auth required:** Yes
-- **Status:** 🚧 Phase 7
+- **Status:** Working
 
 #### `POST /api/attempts/:id/answers`
 
 Autosaves answers during the exam.
 
 - **Auth required:** Yes
-- **Status:** 🚧 Phase 7
+- **Status:** Working
 
 #### `POST /api/attempts/:id/submit`
 
 Student submits the exam.
 
 - **Auth required:** Yes
-- **Status:** 🚧 Phase 7
+- **Status:** Working
 
 ---
 
@@ -272,14 +285,14 @@ Returns all registered users. Supports future query params:
 | `online` | boolean| Filter by online/offline   |
 
 - **Auth required:** Yes — admin
-- **Status:** 🚧 Phase 4
+- **Status:** Working
 
 #### `GET /api/admin/tests`
 
 - **Auth required:** Yes — admin
-- **Status:** 🚧 Phase 5
+- **Status:** Working
 
 #### `GET /api/admin/attempts`
 
 - **Auth required:** Yes — admin
-- **Status:** 🚧 Phase 9
+- **Status:** Working
