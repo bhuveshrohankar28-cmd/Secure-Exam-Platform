@@ -1,0 +1,1223 @@
+{
+  "pbtResults": {
+    "2.6 Write property test for lobby acknowledgment helper (Property 5)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791029330180
+    },
+    "2.2 Write property tests for timer utilities (Property 1 & 3)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791029334556
+    },
+    "2.10 Write property test for percentage score formula (Property 8)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791029345985
+    },
+    "2.8 Write property tests for exam state helpers (Properties 14, 15, 16, 17)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791029660292
+    },
+    "2.4 Write property tests for validation utilities (Properties 4 & 9)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791029766529
+    },
+    "2.12 Write property test for status transition function (Property 11)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791029827279
+    },
+    "2.14 Write property tests for filter and sort utilities (Properties 12 & 13)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791030174060
+    },
+    "3.2 Write property tests for backend grading service (Property 7)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791030303426
+    },
+    "3.4 Write property test for question import validator (Property 10)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791030412254
+    },
+    "4.9 Write property test for answer upsert idempotency (Property 19)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791038289434
+    },
+    "4.8 Write property test for violation recording endpoint (Property 18)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791038300114
+    },
+    "7.2 Write property test for timer drift (Property 2)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791040004272
+    },
+    "8.6 Write component test for test metadata rendering (Property 6)": {
+      "status": "passed",
+      "lastRunTimestamp": 1791043977618
+    }
+  },
+  "executionHistory": {
+    "1.1 Add new types to `frontend/types/index.ts`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026179900
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026196053
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026286783
+      }
+    ],
+    "1.2 Extend `frontend/lib/api/endpoints.ts` with new endpoint wrappers": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026180149
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026199926
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026290921
+      }
+    ],
+    "2.1 Create `frontend/lib/utils/time.ts` — timer formatting and color state": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026180262
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026295527
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026704081
+      }
+    ],
+    "2.2 Write property tests for timer utilities (Property 1 & 3)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026180426
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026832263
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791029780773
+      }
+    ],
+    "2.3 Create `frontend/lib/utils/validation.ts` — form field validators": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026180532
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026299289
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026708731
+      }
+    ],
+    "2.4 Write property tests for validation utilities (Properties 4 & 9)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026180700
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026836065
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791029784907
+      }
+    ],
+    "2.5 Create `frontend/lib/utils/lobby.ts` — lobby acknowledgment helper": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026180777
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026303625
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026712642
+      }
+    ],
+    "2.6 Write property test for lobby acknowledgment helper (Property 5)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026180836
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026840116
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791029785292
+      }
+    ],
+    "2.7 Create `frontend/lib/utils/exam.ts` — exam state helper functions": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026181016
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026307648
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026716861
+      }
+    ],
+    "2.8 Write property tests for exam state helpers (Properties 14, 15, 16, 17)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026181146
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791027146866
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791029786158
+      }
+    ],
+    "2.9 Create `frontend/lib/utils/scores.ts` — score display helpers": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026181219
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026311779
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026720853
+      }
+    ],
+    "2.10 Write property test for percentage score formula (Property 8)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026181344
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791027152052
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791029786513
+      }
+    ],
+    "2.11 Create `frontend/lib/utils/testStatus.ts` — test status transition helper": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026181557
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026730392
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026815675
+      }
+    ],
+    "2.12 Write property test for status transition function (Property 11)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026181698
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791029790819
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030428260
+      }
+    ],
+    "2.13 Create `frontend/lib/utils/filter.ts` — filter and sort utilities": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026181767
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026734393
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026819726
+      }
+    ],
+    "2.14 Write property tests for filter and sort utilities (Properties 12 & 13)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026181878
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791029791383
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030429032
+      }
+    ],
+    "3.1 Add `computePercentage` export to `backend/src/services/gradingService.ts`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026181949
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026740379
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026823771
+      }
+    ],
+    "3.2 Write property tests for backend grading service (Property 7)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026182068
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791029791822
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030429509
+      }
+    ],
+    "3.3 Extend `backend/src/validators/testValidator.ts` with question import validation": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026182135
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026744413
+      },
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026827881
+      }
+    ],
+    "3.4 Write property test for question import validator (Property 10)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026182263
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791029792148
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030430027
+      }
+    ],
+    "4.1 Create `backend/src/services/violationService.ts`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026182399
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030440654
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030844223
+      }
+    ],
+    "4.2 Create `backend/src/controllers/violationController.ts`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026182595
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030852951
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791037767693
+      }
+    ],
+    "4.3 Register violation routes in `backend/src/routes`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026182672
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791037890669
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791037895457
+      }
+    ],
+    "4.4 Add `POST /api/admin/attempts/:id/force-submit` endpoint": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026182785
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030853817
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791037876157
+      }
+    ],
+    "4.5 Add `GET /api/admin/audit-logs` endpoint": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026182896
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030441053
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030844401
+      }
+    ],
+    "4.6 Instrument `AttemptService` and `TestAccessService` with audit log writes": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026183002
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030854367
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791037876991
+      }
+    ],
+    "4.7 Extend `GET /api/admin/attempts` to include `violationCount` and `testTitle`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026183118
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030854481
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791037877545
+      }
+    ],
+    "4.8 Write property test for violation recording endpoint (Property 18)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026183184
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791037900128
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038315949
+      }
+    ],
+    "4.9 Write property test for answer upsert idempotency (Property 19)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026183301
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791037901323
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038316360
+      }
+    ],
+    "5. Checkpoint — backend endpoint tests pass": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026183417
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791052018884
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791054210589
+      }
+    ],
+    "6.1 Create `frontend/components/ui/BottomSheet.tsx`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026183486
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038325888
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038766268
+      }
+    ],
+    "6.2 Create `frontend/components/ui/FixedActionBar.tsx`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026183607
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038326426
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038766845
+      }
+    ],
+    "6.3 Create `frontend/components/ui/StickyTimerBar.tsx`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026183731
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038326996
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038767361
+      }
+    ],
+    "6.4 Create `frontend/components/ui/FAB.tsx`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026183849
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038327576
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038767936
+      }
+    ],
+    "6.5 Create `frontend/components/ui/ViolationOverlay.tsx`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026184001
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038328107
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038768526
+      }
+    ],
+    "6.6 Create `frontend/components/ui/CopyButton.tsx`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026184120
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038328711
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791039164305
+      }
+    ],
+    "7.1 Create `frontend/hooks/useExamTimer.ts`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026184247
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038329148
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791039164629
+      }
+    ],
+    "7.2 Write property test for timer drift (Property 2)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026184412
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791039175744
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040402793
+      }
+    ],
+    "8.1 Create `frontend/app/(student)/lobby/page.tsx` and `LobbyEntryForm` component": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026184491
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791039176335
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040404212
+      }
+    ],
+    "8.2 Write unit test for `LobbyEntryForm` validation rendering": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026184647
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040413158
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040953274
+      }
+    ],
+    "8.3 Create `useLobbyPolling` hook in `frontend/hooks/useLobbyPolling.ts`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026184769
+      },
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791039176852
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040403637
+      }
+    ],
+    "8.4 Implement `LobbyScreen` with all 5 states": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026184920
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040413214
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040952876
+      }
+    ],
+    "8.5 Write unit tests for `LobbyScreen` state transitions": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026185030
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040964394
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044036915
+      }
+    ],
+    "8.6 Write component test for test metadata rendering (Property 6)": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026185181
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040964933
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044037818
+      }
+    ],
+    "9. Checkpoint — lobby tests pass": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026185368
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791054237221
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791054289955
+      }
+    ],
+    "10.1 Create `frontend/hooks/useViolationDetector.ts`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026185450
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040965488
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044038312
+      }
+    ],
+    "10.2 Create `frontend/components/student/QuestionCard.tsx`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026185563
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040966346
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044038908
+      }
+    ],
+    "10.3 Create `frontend/components/student/QuestionNavPanel.tsx`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026185636
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040966883
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044039338
+      }
+    ],
+    "10.4 Create `frontend/components/student/SubmitConfirmationDialog.tsx`": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026185797
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040967217
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044039711
+      }
+    ],
+    "10.5 Refactor `frontend/app/student/exam/[id]/page.tsx` to wire all components": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026185902
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044050479
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044587611
+      }
+    ],
+    "10.6 Write unit tests for exam page state management": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026185973
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044598254
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791048977877
+      }
+    ],
+    "11. Checkpoint — exam screen tests pass": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026186098
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791054304150
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791054311695
+      }
+    ],
+    "12.1 Create `frontend/app/admin/tests/[id]/page.tsx` — test detail page": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026186251
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044598720
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791048518914
+      }
+    ],
+    "12.2 Extend `frontend/app/admin/tests/page.tsx` — test list with creation form": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026186335
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044599273
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791048506107
+      }
+    ],
+    "13.1 Create `frontend/app/admin/attempts/page.tsx` — attempts view": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026186452
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791048990885
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791050210914
+      }
+    ],
+    "13.2 Create `frontend/app/admin/monitor/[testId]/page.tsx` — live monitor": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026186567
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791048991472
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791050124738
+      }
+    ],
+    "13.3 Extend `frontend/app/admin/dashboard/page.tsx` — summary cards": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026186653
+      },
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791048991856
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791050211402
+      }
+    ],
+    "14. Checkpoint — admin panel tests pass": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026186734
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791054316847
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791054322991
+      }
+    ],
+    "15.1 Write end-to-end lobby polling integration test": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026186819
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791050224162
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791051979846
+      }
+    ],
+    "15.2 Write end-to-end exam submission integration test": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026186912
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791050224403
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791051980188
+      }
+    ],
+    "15.3 Write admin force-submit flow integration test": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026187067
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791050224990
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791051980742
+      }
+    ],
+    "15.4 Write violation recording integration test": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026187229
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791050225427
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791051981229
+      }
+    ],
+    "15.5 Write axe-core accessibility tests for exam screen": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026187386
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791050226303
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791051981784
+      }
+    ],
+    "15.6 Write accessibility tests for BottomSheet focus trap": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026187515
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791050226515
+      },
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791051982356
+      }
+    ],
+    "1. Extend type definitions and API client for new feature surfaces": [
+      {
+        "executionId": "76421542-b5be-4411-93ec-22878f191840",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791026291065
+      }
+    ],
+    "2. Implement frontend utility pure functions": [
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030429117
+      }
+    ],
+    "3. Implement and test backend utility functions": [
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791030430150
+      }
+    ],
+    "4. Implement new backend endpoints": [
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791038316419
+      }
+    ],
+    "6. Build shared UI components (mobile-first)": [
+      {
+        "executionId": "5f23ae1c-e2f9-471e-b138-ce81ceb886f2",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791039164350
+      }
+    ],
+    "7. Implement the `useExamTimer` hook": [
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791040402860
+      }
+    ],
+    "8. Implement the student lobby": [
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791044037908
+      }
+    ],
+    "12. Implement the admin test management pages": [
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791048519019
+      }
+    ],
+    "10. Implement the student exam screen": [
+      {
+        "executionId": "02a1b83c-aaa2-4249-976d-42bd1a52da0e",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791048978033
+      }
+    ],
+    "13. Implement the admin dashboard pages": [
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791050211555
+      }
+    ],
+    "15. Integration and accessibility tests": [
+      {
+        "executionId": "1ad6e674-b088-4ec1-9de1-5ea706be6763",
+        "chatSessionId": "sess_22a1f924-a567-4a57-9283-810fe07fd77e",
+        "timestamp": 1791051982527
+      }
+    ]
+  }
+}

@@ -15,6 +15,7 @@ import testRoutes from "./routes/testRoutes";
 import testAccessRoutes from "./routes/testAccessRoutes";
 import attemptRoutes from "./routes/attemptRoutes";
 import adminRoutes from "./routes/adminRoutes";
+import violationRoutes from "./routes/violationRoutes";
 
 const app: Application = express();
 
@@ -81,6 +82,7 @@ app.use("/api/tests", testRoutes);
 app.use("/api/test-access", testAccessRoutes);
 app.use("/api/attempts", attemptRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/violations", violationRoutes);
 
 // ------------------------------------------------------------------
 // 404 Handler

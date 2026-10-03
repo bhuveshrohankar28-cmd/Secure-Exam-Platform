@@ -4,6 +4,7 @@ import { Answer, AttemptStatus, TestAttempt } from "../types/models";
 import { getQuestionsByTestId } from "./testService";
 import { updateLastSeen } from "./userService";
 import { gradeAttempt } from "./gradingService";
+import { writeAuditLog } from "./auditLogService";
 
 /**
  * Storage rule (same as testService): Firestore when configured,
@@ -100,6 +101,15 @@ export async function createAttemptIfAbsent(
     const ref = db.collection(ATTEMPTS).doc(attempt.id);
     try {
       await ref.create(attempt);
+      await writeAuditLog({
+        id: `audit_examstarted_${attempt.id}_${Date.now()}`,
+        userId: attempt.userId,
+        action: "EXAM_STARTED",
+        entityType: "attempt",
+        entityId: attempt.id,
+        timestamp: new Date().toISOString(),
+        metadata: { testId: attempt.testId },
+      });
       return { attempt, created: true };
     } catch (error) {
       // gRPC code 6 = ALREADY_EXISTS
@@ -117,6 +127,15 @@ export async function createAttemptIfAbsent(
   const existing = inMemoryAttempts.get(attempt.id);
   if (existing) return { attempt: existing, created: false };
   inMemoryAttempts.set(attempt.id, attempt);
+  await writeAuditLog({
+    id: `audit_examstarted_${attempt.id}_${Date.now()}`,
+    userId: attempt.userId,
+    action: "EXAM_STARTED",
+    entityType: "attempt",
+    entityId: attempt.id,
+    timestamp: new Date().toISOString(),
+    metadata: { testId: attempt.testId },
+  });
   return { attempt, created: true };
 }
 
@@ -269,6 +288,15 @@ export async function finalizeAttempt(attempt: TestAttempt): Promise<TestAttempt
     ...result,
   };
   await saveAttempt(graded);
+  await writeAuditLog({
+    id: `audit_examsubmitted_${graded.id}_${Date.now()}`,
+    userId: graded.userId,
+    action: "EXAM_SUBMITTED",
+    entityType: "attempt",
+    entityId: graded.id,
+    timestamp: new Date().toISOString(),
+    metadata: { testId: graded.testId },
+  });
   return graded;
 }
 
@@ -298,9 +326,14 @@ export function startExpirySweeper(intervalMs = 30_000): void {
   timer.unref();
 }
 
-// ------------------------------------------------------------------
-// Presence (replaces the separate heartbeat during an exam)
-// ------------------------------------------------------------------
+/** Public re-export of the internal save so admin operations can persist overrides. */
+export async function saveAttemptPublic(attempt: TestAttempt): Promise<void> {
+  if (db) {
+    await db.collection(ATTEMPTS).doc(attempt.id).set(attempt);
+  } else {
+    inMemoryAttempts.set(attempt.id, attempt);
+  }
+}
 
 const lastPresenceWrite = new Map<string, number>();
 

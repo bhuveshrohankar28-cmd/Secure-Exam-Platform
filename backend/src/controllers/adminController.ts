@@ -88,3 +88,31 @@ export async function getAdminTests(req: AuthenticatedRequest, res: Response): P
 export function getAdminAttempts(req: AuthenticatedRequest, res: Response): void {
   res.status(200).json({ success: true, data: [] });
 }
+
+/**
+ * GET /api/admin/audit-logs?userId=&testId=&attemptId=
+ * At least one query parameter must be provided.
+ * Returns up to 500 AuditLog entries ordered by timestamp ascending.
+ */
+import { getAuditLogs } from "../services/auditLogService";
+
+export async function getAuditLogsHandler(
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> {
+  const userId = req.query.userId as string | undefined;
+  const testId = req.query.testId as string | undefined;
+  const attemptId = req.query.attemptId as string | undefined;
+
+  if (!userId && !testId && !attemptId) {
+    res.status(400).json({
+      success: false,
+      error:
+        "At least one filter parameter is required: userId, testId, or attemptId.",
+    });
+    return;
+  }
+
+  const logs = await getAuditLogs({ userId, testId, attemptId });
+  res.status(200).json({ success: true, data: logs });
+}

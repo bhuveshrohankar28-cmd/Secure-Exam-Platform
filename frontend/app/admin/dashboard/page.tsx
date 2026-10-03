@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { adminApi, AttemptView } from "@/lib/api/endpoints";
-import { Test, User } from "@/types";
+import { adminApi } from "@/lib/api/endpoints";
+import { AttemptWithViolations, Test, User } from "@/types";
 
 const navItems = [
   ["Dashboard", "/admin/dashboard"], ["Users", "/admin/users"], ["Tests", "/admin/tests"],
@@ -13,7 +13,7 @@ const navItems = [
 export default function AdminDashboardPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [tests, setTests] = useState<Test[]>([]);
-  const [attempts, setAttempts] = useState<AttemptView[]>([]);
+  const [attempts, setAttempts] = useState<AttemptWithViolations[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -44,6 +44,7 @@ export default function AdminDashboardPage() {
     { label: "Active tests", value: tests.filter((test) => test.status === "active").length, icon: "📋", color: "#10b981" },
     { label: "Attempts today", value: attempts.filter((attempt) => new Date(attempt.startedAt).toDateString() === today).length, icon: "📝", color: "#8b5cf6" },
     { label: "In progress", value: attempts.filter((attempt) => attempt.status === "in_progress").length, icon: "⏱️", color: "#f59e0b" },
+    { label: "Total violations", value: attempts.reduce((sum, a) => sum + (a.violationCount ?? 0), 0), icon: "⚠️", color: "#f59e0b" },
   ];
 
   return (
@@ -62,6 +63,7 @@ export default function AdminDashboardPage() {
         <h2 style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: "12px" }}>Quick actions</h2>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
           {[["Create / manage tests", "/admin/tests"], ["Manage students", "/admin/users"], ["Grant test access", "/admin/access"], ["Review attempts", "/admin/attempts"], ["View reports", "/admin/reports"]].map(([label, href]) => <Link key={href} href={href} className="glass-card" style={{ padding: "14px 18px", textDecoration: "none", color: "var(--color-text-primary)" }}>{label} →</Link>)}
+          {!loading && tests.filter((test) => test.status === "active").map((test) => <Link key={test.id} href={`/admin/monitor/${test.id}`} className="glass-card" style={{ padding: "14px 18px", textDecoration: "none", color: "var(--color-text-primary)" }}>Monitor: {test.title} →</Link>)}
         </div>
         <section style={{ marginTop: "30px" }}>
           <h2 style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: "12px" }}>Recent attempts</h2>

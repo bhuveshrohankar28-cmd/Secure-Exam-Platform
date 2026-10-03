@@ -79,6 +79,8 @@ export interface TestAttempt {
   correctCount: number | null;
   answeredCount: number | null;
   gradedAt: string | null;
+  violationCount?: number;
+  violations?: Violation[];
 }
 
 export interface QuestionInput {
@@ -93,4 +95,48 @@ export interface HealthResponse {
   message: string;
   timestamp: string;
   environment: string;
+}
+
+// ---------------------------------------------------------------------------
+// Violations, audit logs, and lobby state — added for exam-lobby-admin-panel
+// ---------------------------------------------------------------------------
+
+export type ViolationType =
+  | "tab_switch"
+  | "window_blur"
+  | "visibility_hidden"
+  | "fullscreen_exit"
+  | "copy_attempt"
+  | "paste_attempt"
+  | "context_menu"
+  | "keyboard_shortcut";
+
+export interface Violation {
+  id: string;
+  attemptId: string;
+  userId: string;
+  type: ViolationType;
+  timestamp: string;
+  metadata: Record<string, unknown>;
+}
+
+export interface AttemptWithViolations extends TestAttempt {
+  violationCount: number;
+  violations?: Violation[];
+}
+
+export interface AuditLog {
+  id: string;
+  userId: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  timestamp: string;
+  metadata: Record<string, unknown>;
+}
+
+export interface LobbyState {
+  test: Pick<Test, "title" | "description" | "duration" | "totalMarks" | "questionCount" | "status">;
+  state: "waiting" | "ready" | "in_progress" | "finished" | "ended";
+  attempt: TestAttempt | null;
 }

@@ -19,6 +19,8 @@ import {
   touchPresence,
   upsertAnswers,
 } from "../services/attemptService";
+import { writeAuditLog } from "../services/auditLogService";
+import { getViolationCountsByAttemptIds } from "../services/violationService";
 import { seededShuffle } from "../utils/shuffle";
 import { formatZodError } from "../validators/testValidator";
 import {
@@ -381,12 +383,15 @@ export const listAllAttempts = safe(async (req, res) => {
     status: statusParam as TestAttempt["status"] | undefined,
   });
 
+  const violationCounts = await getViolationCountsByAttemptIds(attempts.map((a) => a.id));
+
   res.status(200).json({
     success: true,
     data: attempts.map((a) => ({
       ...toAttemptView(a),
       userName: a.userName,
       testId: a.testId,
+      violationCount: violationCounts.get(a.id) ?? 0,
     })),
     total: attempts.length,
   });
@@ -406,5 +411,81 @@ export const resetAttempt = safe(async (req, res) => {
   res.status(200).json({
     success: true,
     data: { message: "Attempt reset. The student can join the test again." },
+  });
+});
+
+// ------------------------------------------------------------------
+// POST /api/admin/attempts/:id/force-submit   (admin)
+// Grades and closes a student's in-progress attempt on their behalf.
+// ------------------------------------------------------------------
+export const forceSubmitAttempt = safe(async (req, res) => {
+  const id = paramId(req.params.id);
+  const attempt = await getAttempt(id);
+
+  if (!attempt) {
+    res.status(404).json({ success: false, error: "Attempt not found." });
+    return;
+  }
+
+  if (attempt.status !== "in_progress") {
+    res.status(409).json({
+      success: false,
+      error: "Attempt is not in_progress.",
+      data: { attempt: toAttemptView(attempt) },
+    });
+    return;
+  }
+
+  // Grade the attempt using the existing finalize logic, then override
+  // the status to "force_submitted" so it is distinguishable from a
+  // normal student submission.
+  const graded = await finalizeAttempt(attempt);
+  const forceSubmitted: TestAttempt = { ...graded, status: "force_submitted" };
+
+  // Persist the status override directly via the internal save path.
+  // finalizeAttempt already persisted as "graded"; we need one more write
+  // to flip the status to "force_submitted".
+  const { saveAttemptForce } = await import("../services/attemptService").then(
+    (m) => ({ saveAttemptForce: m.saveAttemptPublic ?? null })
+  );
+
+  // saveAttemptPublic may not exist yet — use the public helper if available,
+  // otherwise fall back to re-using createAttemptIfAbsent which is an upsert.
+  // The cleanest path: call the module's internal save via a thin re-export.
+  // We add `saveAttemptPublic` to attemptService in the same task.
+  // For now, write via the upsert that createAttemptIfAbsent exposes:
+  // Since db.set() is idempotent, writing via createAttemptIfAbsent with the
+  // updated object is equivalent to a save. However, the cleanest solution is
+  // to export a dedicated helper. We do that below.
+
+  // Re-import after potential circular resolution — just call the exported fn.
+  const attemptModule = await import("../services/attemptService");
+  if (typeof attemptModule.saveAttemptPublic === "function") {
+    await attemptModule.saveAttemptPublic(forceSubmitted);
+  } else {
+    // Fallback: overwrite via set using createAttemptIfAbsent won't work
+    // for an existing doc; use db directly or the in-memory map.
+    // We rely on the exported saveAttemptPublic added below.
+    throw new Error("saveAttemptPublic is not exported from attemptService.");
+  }
+
+  await writeAuditLog({
+    id: `auditlog_force_${id}_${Date.now()}`,
+    userId: req.user!.id,
+    action: "EXAM_FORCE_SUBMITTED",
+    entityType: "attempt",
+    entityId: id,
+    timestamp: new Date().toISOString(),
+    metadata: {
+      studentId: attempt.userId,
+      testId: attempt.testId,
+      score: forceSubmitted.score,
+      totalMarks: forceSubmitted.totalMarks,
+    },
+  });
+
+  res.status(200).json({
+    success: true,
+    data: { attempt: toAttemptView(forceSubmitted) },
   });
 });

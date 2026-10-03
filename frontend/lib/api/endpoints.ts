@@ -1,4 +1,14 @@
-import { AttemptStatus, QuestionInput, Test, TestAccess, User } from "../../types";
+import {
+  AttemptStatus,
+  AttemptWithViolations,
+  AuditLog,
+  QuestionInput,
+  Test,
+  TestAccess,
+  User,
+  Violation,
+  ViolationType,
+} from "../../types";
 import { apiRequest } from "./client";
 
 export interface AttemptView {
@@ -128,10 +138,36 @@ export const adminApi = {
   getTests: () => apiRequest<Test[]>("/api/admin/tests"),
   getAttempts: (params?: Record<string, string>) => {
     const query = params ? `?${new URLSearchParams(params).toString()}` : "";
-    return apiRequest<AttemptView[]>(`/api/admin/attempts${query}`);
+    return apiRequest<AttemptWithViolations[]>(`/api/admin/attempts${query}`);
   },
   resetAttempt: (attemptId: string) =>
     apiRequest(`/api/admin/attempts/${attemptId}/reset`, { method: "POST" }),
+  forceSubmit: (attemptId: string) =>
+    apiRequest<{ attempt: AttemptView }>(`/api/admin/attempts/${attemptId}/force-submit`, {
+      method: "POST",
+    }),
+  getAttemptViolations: (attemptId: string) =>
+    apiRequest<Violation[]>(`/api/admin/attempts/${attemptId}/violations`),
+  getAuditLogs: (filter: { userId?: string; testId?: string; attemptId?: string }) => {
+    const query = new URLSearchParams(
+      Object.fromEntries(
+        Object.entries(filter).filter(([, v]) => v !== undefined) as [string, string][]
+      )
+    ).toString();
+    return apiRequest<AuditLog[]>(`/api/admin/audit-logs${query ? `?${query}` : ""}`);
+  },
+};
+
+export const violationsApi = {
+  record: (violation: {
+    attemptId: string;
+    type: ViolationType;
+    metadata?: Record<string, unknown>;
+  }) =>
+    apiRequest<{ id: string; timestamp: string }>("/api/violations", {
+      method: "POST",
+      body: violation,
+    }),
 };
 
 export const testAccessApi = {

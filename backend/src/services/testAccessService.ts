@@ -2,6 +2,7 @@ import type { Query } from "firebase-admin/firestore";
 import { db } from "../firebase/firebaseAdmin";
 import { TestAccess } from "../types/models";
 import { getTestById } from "./testService";
+import { writeAuditLog } from "./auditLogService";
 
 const COLLECTION = "testAccess";
 const inMemoryAccess = new Map<string, TestAccess>();
@@ -63,6 +64,15 @@ export async function grantTestAccess(
   } else {
     inMemoryAccess.set(id, access);
   }
+  await writeAuditLog({
+    id: `audit_accessgranted_${id}_${Date.now()}`,
+    userId: grantedBy,
+    action: "TEST_ACCESS_GRANTED",
+    entityType: "testAccess",
+    entityId: id,
+    timestamp: new Date().toISOString(),
+    metadata: { testId, targetUserId: userId },
+  });
   return access;
 }
 
